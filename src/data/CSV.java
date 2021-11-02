@@ -2,31 +2,74 @@ package data;
 
 import data.dto.*;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CSV {
+	private static final String API_PROPERTIES = "src/resource/apikey.properties";
 	private String dir;
 	
 	public CSV() {
 		dir = null;
 	}
 	
-//	private boolean downloadC19() {
-//		return false;
-//	}
+	ArrayList<C19Data> getC19Api(String date){
+		ArrayList<C19Data> dto = new ArrayList<>();
+		Properties properties = new Properties();
+		StringBuilder urlBuilder = new StringBuilder("http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19NatInfStateJson");
+		try {
+			FileReader resource = new FileReader(API_PROPERTIES);
+			properties.load(resource);
+			//APIï¿½ï¿½È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ URLï¿½ï¿½ï¿½ï¿½
+			urlBuilder.append("?"+URLEncoder.encode("serviceKey","UTF-8") + "=" + properties.getProperty("enckey").toString());
+			urlBuilder.append("&" + URLEncoder.encode("ServiceKey","UTF-8") + "=" + URLEncoder.encode(properties.getProperty("deckey").toString(),"UTF-8"));
+	        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È£*/
+	        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½*/
+	        urlBuilder.append("&" + URLEncoder.encode("startCreateDt","UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); /*ï¿½Ë»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	        urlBuilder.append("&" + URLEncoder.encode("endCreateDt","UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); /*ï¿½Ë»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	        URL url = new URL(urlBuilder.toString());
+	        //HTML Request
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
+	        conn.setRequestProperty("Content-type", "application/json");
+	        System.out.println("Request code: " + conn.getResponseCode());
+	        BufferedReader rd;
+	        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+	        	rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        } else {
+	        	rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+	        }
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        while((line = rd.readLine())!=null) {
+	        	sb.append(line);
+	        }
+	        rd.close();
+	        conn.disconnect();
+	        System.out.println(sb.toString());
+			
+		} catch(FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return dto;
+	}
 	
-//	public void C19DataToCSV(ArrayList<C19DTO>) {
-//	
-//	}
+	public void C19DataToCSV(ArrayList<C19Data> list) {
 	
-//	public void CGIDataToCSV(ArrayList<CGIDTO>) {
-//		//?
-//	}
+	}
 	
-	//csvÆÄÀÏ¿¡¼­ µ¥ÀÌÅÍ¸¦ ÃßÃâÇÏ´Â ¸Þ¼Òµå
+	public void CGIDataToCSV(ArrayList<CGIDTO> list) {
+		//?
+	}
+	
+	//csvï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Þ¼Òµï¿½
 	public ArrayList<CGIDTO> getCGIData() {
 		ArrayList<CGIDTO> csvList = new ArrayList<CGIDTO>();
 		String csvFilePath = "\resource";
@@ -35,29 +78,29 @@ public class CSV {
 		String lineText = null;		
 		
 		 try {			 	
-			 	lineReader = new BufferedReader(new FileReader(csv, Charset.forName("UTF-8")));
+			 	lineReader = new BufferedReader(new FileReader(csv));
 			 	
-			 	//¼Ó¼º ÀÌ¸§µéÀ» Á¦¿ÜÇÑ µ¥ÀÌÅÍµéÀ» °¡Á®¿À±â À§ÇØ ÇÑ ÁÙÀ» ¸ÕÀú ÀÐ´Â´Ù. 
+			 	//ï¿½Ó¼ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð´Â´ï¿½. 
 			 	lineReader.readLine();
 			 	
 	            while ((lineText = lineReader.readLine()) != null) {
-	            	//,·Î °¢ ¼Ó¼ºÀ» ±¸ºÐÇÒ ¶§ ""¾ÈÀÇ ,´Â ¹«½ÃÇÏ¿© ±¸ºÐÇÑ´Ù.
+	            	//,ï¿½ï¿½ ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ""ï¿½ï¿½ï¿½ï¿½ ,ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	                String[] data = lineText.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 
-	    			//Á¾±³ Ã³¸®
+	    			//ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	    			String rg = data[6];
 	    			Religion filteredRg = new Religion();	    			
 	    			
-	    			//µ¥ÀÌÅÍ Áß ºÒÇÊ¿äÇÑ Á¤º¸µéÀ» »èÁ¦ Ã³¸®
+	    			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	    			rg = rg.replace("\"", "");
-	    			rg = rg.replace(" µî", "");
+	    			rg = rg.replace(" ï¿½ï¿½", "");
 	    			rg = rg.replace(",", "");
 	    			rg = rg.replace(" ", "");
 	    			rg = rg.replace("(", "");
 	    			rg = rg.replace(")", "");
 	    			
-	    			//Á¤±Ô½ÄÀ» ÀÌ¿ëÇÏ¿© ÆÐÅÏ¿¡ ¸Â´Â µ¥ÀÌÅÍ¸¸ ÃßÃâÇÏ¿© Arraylist¿¡ ÀúÀå
-	    			Pattern pattern = Pattern.compile("[°¡-ÆRA-Za-z]+\\d+[.]\\d+%|[°¡-ÆRA-Za-z]+\\d+%|[°¡-ÆRA-Za-z]+\\d+[-]\\d+%|[°¡-ÆRA-Za-z]+\\\\d+%[°¡-ÆRA-Za-z]+");
+	    			//ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Â´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ Arraylistï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	    			Pattern pattern = Pattern.compile("[ï¿½ï¿½-ï¿½RA-Za-z]+\\d+[.]\\d+%|[ï¿½ï¿½-ï¿½RA-Za-z]+\\d+%|[ï¿½ï¿½-ï¿½RA-Za-z]+\\d+[-]\\d+%|[ï¿½ï¿½-ï¿½RA-Za-z]+\\\\d+%[ï¿½ï¿½-ï¿½RA-Za-z]+");
 	    			Matcher m = pattern.matcher(rg);
 	    			List<String> rgData = new ArrayList<String>();
 	    			while(m.find()) {
@@ -65,18 +108,18 @@ public class CSV {
 	    				rgData.add(result);
 	    			}
 	    			
-	    			//±âÅ¸ Ç×¸ñÀÇ Áßº¹À» Ã³¸® & ºñÀ²ÀÌ 100%°¡ ¾ÈµÇ´Â µ¥ÀÌÅÍ Ã³¸® & ºñÀ²ÀÌ ¹üÀ§°ªÀ¸·Î ÁÖ¾îÁø µ¥ÀÌÅÍÀÇ Ã³¸® 
+	    			//ï¿½ï¿½Å¸ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ßºï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 100%ï¿½ï¿½ ï¿½ÈµÇ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ 
 	    			Double sumRate = 0.0;
 	    			int gita = -1;
 	    			
 	    			for(int i = 0; i < rgData.size(); i++) {	 			
 	    				sumRate = sumRate + Double.parseDouble(rgData.get(i).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""));
 	    				
-	    				if((rgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("±âÅ¸")) {
-	    					// "±âÅ¸" Ç×¸ñÀÌ ÀÌ¹Ì ÀÖÀ¸¸é, ±× Ç×¸ñÀÇ ÀÎµ¦½º¸¦ ±¸ÇÔ
+	    				if((rgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("ï¿½ï¿½Å¸")) {
+	    					// "ï¿½ï¿½Å¸" ï¿½×¸ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	    					gita = i;
 	    				}
-	    				//¹üÀ§°ª Ã³¸®
+	    				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	    				if(rgData.get(i).contains("-")) {
 	    					int index = rgData.get(i).indexOf("-");
 	    					String substr1 = rgData.get(i).substring(index-2, index);
@@ -88,26 +131,26 @@ public class CSV {
 	    				
 	    			}
 	    			
-	    			//±âÅ¸ Ã³¸®
+	    			//ï¿½ï¿½Å¸ Ã³ï¿½ï¿½
 	    			if(!rgData.isEmpty()) {
 		    			if(sumRate < 100.0) {
 		    				if(gita == -1) {
 			    				Double toAdd = 100.0 - sumRate;	 
 		    					toAdd = Math.round(toAdd * 100) / 100.0;
-		    					rgData.add("±âÅ¸" + Double.toString(toAdd) + "%");
+		    					rgData.add("ï¿½ï¿½Å¸" + Double.toString(toAdd) + "%");
 			    			} else {
 			    				Double toAdd = 100.0 - sumRate;
 			    				toAdd = Math.round(toAdd * 100) / 100.0;
-			    				rgData.set(gita ,"±âÅ¸" + Double.toString(toAdd + Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+			    				rgData.set(gita ,"ï¿½ï¿½Å¸" + Double.toString(toAdd + Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 			    			}
 		    			} else if(gita != -1 && sumRate >= 100.0) {
-		    				rgData.set(gita ,"±âÅ¸" + Double.toString(Math.round(Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "")) * 100)/100.0) + "%");
+		    				rgData.set(gita ,"ï¿½ï¿½Å¸" + Double.toString(Math.round(Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "")) * 100)/100.0) + "%");
 		    			}
 	    			}
 	    			
 	    			System.out.println(rgData);
     			
-	    			//°¢ Á¾±³ µ¥ÀÌÅÍ¸¦ ÀÌ¸§°ú ºñÀ²·Î ³ª´©¾î¼­ Religion¿¡ ÀúÀå
+	    			//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½î¼­ Religionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	    			String rg_name;
 	    			String rg_number;
 	    			Double rg_rate;	
@@ -117,8 +160,8 @@ public class CSV {
 	    			for(int i = 0; i< rgArray.length; i++) {
 	    				System.out.println(rgArray[i]);
 	    				rg_name = rgArray[i].replaceAll("([0-9.]+[%]?)", "");
-	    				if(rg_name.contains("±âÅ¸")) {
-	    					rg_name = "±âÅ¸";
+	    				if(rg_name.contains("ï¿½ï¿½Å¸")) {
+	    					rg_name = "ï¿½ï¿½Å¸";
 	    				}	    				
 	    				rg_number = rgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
 	    				rg_rate = Double.parseDouble(rg_number);
@@ -128,20 +171,20 @@ public class CSV {
 	    			
 	    			
 	    			
-	    			//±×·ì °¡°ø
+	    			//ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½
 	    			String mg = data[7];
 	    			MajorGroups filteredMg = new MajorGroups();	
 	    			
-	    			//µ¥ÀÌÅÍ Áß ºÒÇÊ¿äÇÑ Á¤º¸µéÀ» »èÁ¦ Ã³¸®
+	    			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	    			mg = mg.replace("\"", "");
-	    			mg = mg.replace(" µî", "");
+	    			mg = mg.replace(" ï¿½ï¿½", "");
 	    			mg = mg.replace(",", "");
 	    			mg = mg.replace(" ", "");
 	    			mg = mg.replace("(", "");
 	    			mg = mg.replace(")", "");
 	    			
-	    			//Á¤±Ô½ÄÀ» ÀÌ¿ëÇÏ¿© ÆÐÅÏ¿¡ ¸Â´Â µ¥ÀÌÅÍ¸¸ ÃßÃâÇÏ¿© Arraylist¿¡ ÀúÀå
-	    			Pattern pattern2 = Pattern.compile("[°¡-ÆRA-Za-z]+\\d+[.]\\d+%|[°¡-ÆRA-Za-z]+\\d+%|[°¡-ÆRA-Za-z]+\\d+[-]\\d+%|[°¡-ÆRA-Za-z]+\\d+%[°¡-ÆRA-Za-z]+");
+	    			//ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Â´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ Arraylistï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	    			Pattern pattern2 = Pattern.compile("[ï¿½ï¿½-ï¿½RA-Za-z]+\\d+[.]\\d+%|[ï¿½ï¿½-ï¿½RA-Za-z]+\\d+%|[ï¿½ï¿½-ï¿½RA-Za-z]+\\d+[-]\\d+%|[ï¿½ï¿½-ï¿½RA-Za-z]+\\d+%[ï¿½ï¿½-ï¿½RA-Za-z]+");
 	    			Matcher m2 = pattern2.matcher(mg);
 	    			List<String> mgData = new ArrayList<String>();
 	    			while(m2.find()) {
@@ -149,7 +192,7 @@ public class CSV {
 	    				mgData.add(result);
 	    			}
 	    			
-	    			//±âÅ¸ Ç×¸ñÀÇ Áßº¹À» Ã³¸® & ºñÀ²ÀÌ 100%°¡ ¾ÈµÇ´Â µ¥ÀÌÅÍ Ã³¸® & ºñÀ²ÀÌ ¹üÀ§°ªÀ¸·Î ÁÖ¾îÁø µ¥ÀÌÅÍÀÇ Ã³¸® 
+	    			//ï¿½ï¿½Å¸ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ßºï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 100%ï¿½ï¿½ ï¿½ÈµÇ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ 
 	    			Double sumRate1 = 0.0;
 	    			int gita1 = -1;
 	    			
@@ -157,10 +200,10 @@ public class CSV {
 	    				
 	    				sumRate1 = sumRate1 + Double.parseDouble(mgData.get(i).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""));
 	    				
-	    				if((mgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("±âÅ¸")) {
+	    				if((mgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("ï¿½ï¿½Å¸")) {
 	    					gita1 = i;
 	    				}
-	    				//¹üÀ§°ª Ã³¸®
+	    				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	    				if(mgData.get(i).contains("-")) {
 	    					int index = mgData.get(i).indexOf("-");
 	    					String substr1 = mgData.get(i).substring(index-2, index);
@@ -171,26 +214,26 @@ public class CSV {
 	    				}
 	    				
 	    			}
-	    			//±âÅ¸ Ã³¸®
+	    			//ï¿½ï¿½Å¸ Ã³ï¿½ï¿½
 	    			if(!mgData.isEmpty()) {
 		    			if(sumRate1 <100.0) {
 			    			if(gita1 == -1) {
 			    				Double toAdd = 100.0 - sumRate1;	 
 		    					toAdd = Math.round(toAdd * 100) / 100.0;
-		    					mgData.add("±âÅ¸" + Double.toString(toAdd) + "%");
+		    					mgData.add("ï¿½ï¿½Å¸" + Double.toString(toAdd) + "%");
 			    			} else {
 			    				Double toAdd = 100.0 - sumRate1;
 			    				toAdd = Math.round(toAdd * 100) / 100.0;
-			    				mgData.set(gita1 ,"±âÅ¸" + Double.toString(toAdd + Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+			    				mgData.set(gita1 ,"ï¿½ï¿½Å¸" + Double.toString(toAdd + Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 			    			}
 		    			} else if(gita1 != -1 && sumRate1 >= 100.0) {
-		    				mgData.set(gita1 ,"±âÅ¸" + Double.toString(Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+		    				mgData.set(gita1 ,"ï¿½ï¿½Å¸" + Double.toString(Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 		    			}
 	    			}	    			
 	    			
 	    			System.out.println(mgData);
     			
-	    			//°¢ ÁÖ¿ä¹ÎÁ· µ¥ÀÌÅÍ¸¦ ÀÌ¸§°ú ºñÀ²·Î ³ª´©¾î¼­ MajorGroups¿¡ ÀúÀå
+	    			//ï¿½ï¿½ ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½î¼­ MajorGroupsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	    			String mg_name;
 	    			String mg_number;
 	    			Double mg_rate;
@@ -200,8 +243,8 @@ public class CSV {
 
 	    			for(int i = 0; i< mgArray.length; i++) {	
 	    				mg_name = mgArray[i].replaceAll("([0-9.]+[%]?)", "");
-	    				if(mg_name.contains("±âÅ¸")) {
-	    					mg_name = "±âÅ¸";
+	    				if(mg_name.contains("ï¿½ï¿½Å¸")) {
+	    					mg_name = "ï¿½ï¿½Å¸";
 	    				}	    	
 	    				mg_number = mgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
 	    				mg_rate = Double.parseDouble(mg_number);
@@ -209,12 +252,12 @@ public class CSV {
 	    				filteredMg.setMGData(mg_name, mg_rate);
 	    			}
 	    			
-	    			//¸éÀû Ç×¸ñÀÇ ºó µ¥ÀÌÅÍ Ã³¸®
+	    			//ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	    			if(data[9] == "") {
 	    				data[9] = "0.0";
 	    			}	    			    			
 	    			
-	    			//Builder Ã³¸®
+	    			//Builder Ã³ï¿½ï¿½
 	    			CGIDTO dto = new CGIDTO.Builder()
 	    					.setCountry(data[0])	
 	    					.setCountryCode(data[1])
@@ -232,7 +275,7 @@ public class CSV {
 	    					.setYear(Integer.parseInt(data[13]))
 	    					.build();
 	    			
-	    			//ÇÑ ³ª¶óÀÇ CGIDTO °´Ã¼¸¦ ArrayList¿¡ Ãß°¡
+	    			//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CGIDTO ï¿½ï¿½Ã¼ï¿½ï¿½ ArrayListï¿½ï¿½ ï¿½ß°ï¿½
 	                csvList.add(dto);
 	            }
 	            
@@ -243,7 +286,7 @@ public class CSV {
 	        } finally {
 	            try {
 	                if (lineReader != null) { 
-	                	lineReader.close(); // »ç¿ë ÈÄ BufferedReader¸¦ ´Ý¾ÆÁØ´Ù.
+	                	lineReader.close(); // ï¿½ï¿½ï¿½ ï¿½ï¿½ BufferedReaderï¿½ï¿½ ï¿½Ý¾ï¿½ï¿½Ø´ï¿½.
 	                }
 	            } catch(IOException e) {
 	                e.printStackTrace();

@@ -1,50 +1,66 @@
 package data;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 
-import data.dto.C19DTO;
+import data.dto.C19Data;
 
 public class Database {
-	//µ•¿Ã≈Õ∫£¿ÃΩ∫ Connection
-	private Connection con;
-	//DBø¨∞· ªÛºˆ
-	private static final String DB_DRIVER_CLASS = "org.mysql.jdbc.Driver";
-	private static final String DB_URL = "jdbc:mysql://¡÷º“:∆˜∆Æ/µ•¿Ã≈Õ∫£¿ÃΩ∫";
-	private static final String DB_USERNAME = "∞Ë¡§";
-	private static final String DB_PASSWORD = "∆–Ω∫øˆµÂ";
-	
-	//ª˝º∫¿⁄
-	public Database() {
-		con = null;
-	}
-	
-	//DBø¨∞·
-	public boolean conncetDB() {
-		try {
-			Class.forName(DB_DRIVER_CLASS);
-			con = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-		} catch(ClassNotFoundException e) {
-			e.printStackTrace();
-			return false;
-		} catch(SQLException e) {
-			e.printStackTrace();
-			return false;
+		//DB Connection
+		private Connection con;
+		//DBÏÑ§Ï†ïÌååÏùº 
+		private static final String RESOURCE = "src/resource/db.properties";
+		//DBÏÑ§Ï†ïÍ∞í
+		private String DB_DRIVER_CLASS;
+		private String DB_URL;
+		private String DB_USERNAME;
+		private String DB_PASSWORD;
+		
+		//ÏÉùÏÑ±Ïûê 
+		public Database() {
+			con = null;
 		}
-		return true;
-	}
-	
-	//insertData
-	public void insertC19Data() {
 		
-	}
-	public void insertCGIData() {
-		
-	}
-	//selectData
-	public ArrayList<C19DTO> selectC19Data(String sql){
-		return new ArrayList<C19DTO>();
-	}
+		//DBÏó∞Í≤∞ 
+		public boolean conncetDB() {
+			Properties properties = new Properties();
+			try {
+				//DBÏÑ§Ï†ïÌååÏùº ÏùΩÍ∏∞, FileNotFoundException
+				FileReader resources = new FileReader(RESOURCE);
+				//DBÏÑ§Ï†ïÌååÏùº Î∂àÎü¨Ïò§Í∏∞, IOException
+				properties.load(resources);
+				DB_DRIVER_CLASS = properties.getProperty("driver").toString();
+				DB_URL = properties.getProperty("url").toString();
+				DB_USERNAME = properties.getProperty("username");
+				DB_PASSWORD = properties.getProperty("password");
+				//DBÎìúÎùºÏù¥Î≤ÑÍ∞ÄÏ†∏Ïò§Í∏∞, ClassNotFoundException, SQLException
+				Class.forName(DB_DRIVER_CLASS);
+				con = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
+				System.out.println("DBÏó∞Í≤∞ ÏÑ±Í≥µ");
+			} catch(ClassNotFoundException e) {
+				e.printStackTrace();
+				return false;
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return false;
+			} catch(FileNotFoundException e) {
+				e.printStackTrace();
+			} catch(IOException e){
+				e.printStackTrace();
+			}
+			return true;
+		}
+		//insertData
+		public void insertC19Data() {}
+		public void insertCGIData() {}
+		//selectData
+		public ArrayList<C19Data> selectC19Data(String sql){
+			return new ArrayList<C19Data>();
+		}
 }

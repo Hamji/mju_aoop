@@ -1,23 +1,23 @@
 package data;
 
-import data.dto.C19DTO;
+import data.dto.C19Data;
 
 public class Data {
-	//DB¿¡ Á¢±ÙÀ» À§ÇÑ DB°´Ã¼, CSVÀÐ±â, ¾²±â¸¦ À§ÇÑ CSV°´Ã¼
+	//DBï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ DBï¿½ï¿½Ã¼, CSVï¿½Ð±ï¿½, ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ CSVï¿½ï¿½Ã¼
 	private Database db;
 	private CSV csv;
 	
-	//»ý¼ºÀÚ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	public Data() {
 		db = new Database();
 		csv = new CSV();
 	}
 	
-	//µ¥ÀÌÅÍ¸¦ °¡Á®¿À±â À§ÇÑ ¸Þ¼­µåµé
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ï¿½
 	public int getCountryCount(String filter) {
 		return 0;
 	}
-	public C19DTO getC19Data(String filter) {
-		return new C19DTO();
+	public C19Data getC19Data(String filter) {
+		return new C19Data();
 	}
 }
