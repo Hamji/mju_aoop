@@ -1,7 +1,7 @@
 package data.dto;
 
-public class C19DTO {
-	//Covid-19 µ¥ÀÌÅÍ ³»¿¡ µé¾îÀÖ´Â ¿ä¼Òµé
+public class C19Data {
+	//Covid-19 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½Òµï¿½
 	private String fips;
 	private String admin2;
 	private String provinceState;
@@ -16,9 +16,9 @@ public class C19DTO {
 	private double incidentRate;
 	private double fatality;
 	
-	//»ý¼ºÀÚ
-	public C19DTO() {}
-	private C19DTO(Builder builder) {
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	public C19Data() {}
+	private C19Data(Builder builder) {
 		this.fips = builder.fips;
 		this.admin2 = builder.admin2;
 		this.provinceState = builder.provinceState;
@@ -75,9 +75,9 @@ public class C19DTO {
 		return this.fatality;
 	}
 	
-	//³»ºÎÅ¬·¡½º Builder
+	//ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ Builder
 	public static class Builder{
-		//Builder¸¦ ÅëÇØ ¹Þ¾Æ¿Ã µ¥ÀÌÅÍ
+		//Builderï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		private String fips;
 		private String admin2;
 		private String provinceState;
@@ -92,7 +92,7 @@ public class C19DTO {
 		private double incidentRate;
 		private double fatality;
 		
-		//»ý¼ºÀÚ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		public Builder() {}
 		
 		//Setter
@@ -149,8 +149,8 @@ public class C19DTO {
 			return this;
 		}
 		//build
-		public C19DTO build() {
-			return new C19DTO(this);
+		public C19Data build() {
+			return new C19Data(this);
 		}
 	}
 }
