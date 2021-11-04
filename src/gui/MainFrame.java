@@ -15,7 +15,6 @@ public class MainFrame extends JFrame {
 	private InformPanel informPanel;
 	private OverviewPanel overviewPanel;
 	
-	
 	public static void main(String[] args) {
 		
 	}
@@ -23,7 +22,7 @@ public class MainFrame extends JFrame {
 		setTitle("FreshmanTravel");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1280, 800);
+		setBounds(100, 100, 1480, 800);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		contentPane.setLayout(new BorderLayout(5, 5));
@@ -31,7 +30,9 @@ public class MainFrame extends JFrame {
 		
 		this.overviewPanel = new OverviewPanel();
 		this.informPanel = new InformPanel();
-		
+
+		PanelManager.getInstance().addPanel(informPanel);
+		PanelManager.getInstance().addPanel(overviewPanel);
 		this.contentPane.add(this.informPanel, BorderLayout.WEST);
 		this.contentPane.add(this.overviewPanel, BorderLayout.CENTER);
 	}	

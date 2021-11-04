@@ -2,19 +2,24 @@ package gui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.*;
 
 public class ApplyedListPanel extends BasicPanel {
+	private DefaultListModel items;
 	private JList list;
 	private JLabel label;
 	
 	public ApplyedListPanel() {
 		this.setLayout(new BorderLayout(0, 0));
-		list = new JList();
-		label = new JLabel("Àû¿ëµÈ ÇÊÅÍ");
+		items = new DefaultListModel();
+		list = new JList(items);
+		label = new JLabel("ì ìš©ëœ í•„í„°");
 		
 		this.add(label, BorderLayout.NORTH);
 		this.add(list, BorderLayout.CENTER);
+	}
+
+	public void addFilter(String filter) {
+		items.add(list.getModel().getSize(), filter);
 	}
 }

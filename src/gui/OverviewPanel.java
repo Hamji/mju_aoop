@@ -16,7 +16,9 @@ public class OverviewPanel extends BasicPanel{
 		this.searchPanel = new SearchPanel();
 		this.mapPanel = new MapPanel(new ImageIcon(MainFrame.class.getResource("../image/image.jpg"))
 				.getImage());
-		
+
+		PanelManager.getInstance().addPanel(searchPanel);
+		PanelManager.getInstance().addPanel(mapPanel);
 		this.add(this.searchPanel, BorderLayout.NORTH);
 		this.add(this.mapPanel, BorderLayout.CENTER);
 	}

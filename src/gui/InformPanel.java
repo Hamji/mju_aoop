@@ -13,7 +13,9 @@ public class InformPanel extends BasicPanel {
 		this.setLayout(new GridLayout(2, 1));
 		filterPanel = new FilterPanel();
 		applyedListPanel = new ApplyedListPanel();
-		
+
+		PanelManager.getInstance().addPanel(applyedListPanel);
+		PanelManager.getInstance().addPanel(filterPanel);
 		this.add(this.applyedListPanel);
 		this.add(this.filterPanel);
 		

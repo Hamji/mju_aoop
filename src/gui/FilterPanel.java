@@ -1,9 +1,8 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,49 +10,57 @@ import java.util.List;
 import javax.swing.JButton;
 
 public class FilterPanel extends BasicPanel {
-	final private String[] categori = {"Áö¿ª", "³¯¾¾", "¹®È­", "Á¾±³", "ÄÚ·Î³ª"};
-	final private String[] region = {"¾Æ½Ã¾Æ", "¾ÆÇÁ¸®Ä«", "¾Æ¸Ş¸®Ä«", "À¯·´"};
-	final private String[] weather = {"°ÇÁ¶", "½ÀÇÔ", "´õ¿ò", "Ãß¿ò"};
-	final private String[] faith = {"ÀÌ½½¶÷", "°¡Åç¸¯", "°³½Å±³", "ÈòµÎ±³", "¹«±³"};
-	
+	final private String[] categori = {"ì§€ì—­", "ë‚ ì”¨", "ë¬¸í™”", "ì¢…êµ", "ì½”ë¡œë‚˜"};
+
 	private List<String> list;
 	private List<JButton> btnList;
-	
-	private GridBagLayout gbl_panel;
-	
+	private DetailFilterPanel detailFilterPanel;
+
+	private class FilterButtons extends BasicPanel {
+		private GridBagLayout gbl_panel;
+
+		public FilterButtons() {
+			this.gbl_panel = new GridBagLayout();
+			gbl_panel.columnWidths = new int[]{0, 0};
+			gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+			gbl_panel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			this.setLayout(gbl_panel);
+
+			GridBagConstraints gbcList[] = new GridBagConstraints[list.size()];
+			setLayout(gbl_panel);
+
+			// ë²„íŠ¼ ì‚½ì…
+			for (int i = 0; i < list.size(); i++) {
+				JButton temp = new JButton(list.get(i));
+				temp.setPreferredSize(new Dimension(200, 50));
+				btnList.add(temp);
+				gbcList[i] = new GridBagConstraints();
+				gbcList[i].insets = new Insets(0, 0, 5, 0);
+				gbcList[i].gridx = 0;
+				gbcList[i].gridy = i;
+
+				temp.addActionListener(e -> detailFilterPanel.drawButton(temp.getText()));
+				this.add(temp, gbcList[i]);
+			}
+		}
+	}
+
 	public FilterPanel() {
 		this.list = new ArrayList<String>(Arrays.asList(this.categori));
 		this.btnList = new ArrayList<JButton>();
 		//System.out.print(list);
-		
-		this.gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		this.setLayout(gbl_panel);
-		drawBtn();
-	
-	}
-	
-	public void drawBtn() {
-		// ¹öÆ° »èÁ¦
-		for(JButton btn : this.btnList) 
-			this.remove(btn);
-		
-		GridBagConstraints gbcList[] = new GridBagConstraints[list.size()];
-		
-		// ¹öÆ° »ğÀÔ
-		for (int i = 0; i < this.list.size(); i++) {
-			JButton temp = new JButton(this.list.get(i));
-			temp.setPreferredSize(new Dimension(200, 50));
-			this.btnList.add(temp);
-			gbcList[i] = new GridBagConstraints();
-			gbcList[i].insets = new Insets(0, 0, 5, 0);
-			gbcList[i].gridx = 0;
-			gbcList[i].gridy = i;
 
-			this.add(temp, gbcList[i]);
-		}
+		for(JButton btn: btnList) this.remove(btn); // ìš”ì¹œêµ¬ ì–¸ì œ ì“°ëŠ”ê±°ì—ìš”?
+		detailFilterPanel = new DetailFilterPanel();
+		FilterButtons filterButtons = new FilterButtons();
+
+		PanelManager.getInstance().addPanel(detailFilterPanel);
+		PanelManager.getInstance().addPanel(filterButtons);
+
+		this.setLayout(new GridLayout(1, 2));
+		this.add(filterButtons);
+		this.add(detailFilterPanel);
 	}
+
 }
