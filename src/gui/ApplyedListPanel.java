@@ -34,7 +34,7 @@ public class ApplyedListPanel extends BasicPanel {
 	}
 
 	public void addFilter(String filter) {
-		items.add(list.getModel().getSize(), filter);
+		if(!items.contains(filter)) items.add(list.getModel().getSize(), filter);
 	}
 
 	public void removeFilter() {
