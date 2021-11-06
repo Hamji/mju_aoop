@@ -4,29 +4,25 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class SearchPanel extends BasicPanel {
+
 	private JButton searchBtn;
-	private JTextField searchTxt;
+	private JComboBox searchTxt;
 	
 	public SearchPanel() {
 		this.searchBtn = new JButton("search");
-		this.searchTxt = new JTextField();
-		this.searchTxt.setColumns(10);
+		this.searchTxt = new AutoCompleteJComboBox();
+
 		this.setLayout(new BorderLayout(5, 5));
 		this.add(searchBtn, BorderLayout.EAST);
 		this.add(searchTxt, BorderLayout.CENTER);
 		
-		this.searchBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				new ResultFrame();
-			}
-		});
+		this.searchBtn.addActionListener(e -> new ResultFrame((String) searchTxt.getSelectedItem()));
 	}
+
 }

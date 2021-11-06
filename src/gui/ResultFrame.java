@@ -8,7 +8,7 @@ public class ResultFrame extends JDialog {
 	private CountryListPanel countryListPanel;
 	private CountryInfoPanel countryInfoPanel;
 	
-	public ResultFrame() {
+	public ResultFrame(String text) {
 		this.setBounds(500, 200, 800, 500);
 		this.setSize(800, 500);
 		this.setResizable(false);
