@@ -39,8 +39,6 @@ public class Data {
 					resultDTO = db.selectCGIData(filter).get(i);
 				}
 			}
-			
-			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,8 +46,22 @@ public class Data {
 		return resultDTO;
 	}
 	
-	//sql의 any연산자 사용??
-//	public ArrayList<CGIDTO> getFilteredData(String[] filter) {
-//		return new ArrayList<CGIDTO>;
-//	}
+	//종교로 검색
+	public ArrayList<CGIDTO> getDataReligion(String keyword) {
+		return db.selectCGIDataReligion(keyword);
+	}
+	//기후로 검색
+	public ArrayList<CGIDTO> getDataWeather(String keyword){
+		return db.selectCGIDataWeather(keyword);
+	}
+	//국가명으로 검색
+	public ArrayList<CGIDTO> getDataName(String keyword){
+		return db.selectCGIDataName(keyword);
+	}
+	//지역으로 검색
+	public ArrayList<CGIDTO> getDataLocation(String keyword){
+		return db.selectCGIDataLocation(keyword);
+	}
 }
+	
+	

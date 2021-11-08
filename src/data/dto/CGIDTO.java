@@ -1,10 +1,7 @@
 package data.dto;
 
-import data.MajorGroups;
-import data.Religion;
-
 public class CGIDTO {
-	//�����Ϲ����� ������ ���� ����ִ� ��ҵ�
+	//데이터값들
 	private String country;
 	private String countryCode;
 	private String capital;
@@ -20,7 +17,7 @@ public class CGIDTO {
 	private String language;
 	private int year;
 	
-	//������
+	//생성자
 	public CGIDTO() {}
 	private CGIDTO(Builder builder) {
 		this.country = builder.country;
@@ -96,9 +93,9 @@ public class CGIDTO {
 		return this.year;
 	}
 	
-	//����Ŭ���� Builder
+	//내부클래스 Builder
 	public static class Builder {
-		//Builder�� ���� �޾ƿ� ������
+		//Builder를 통해 받아올 자료
 		private String country;
 		private String countryCode;
 		private String capital;
@@ -114,7 +111,7 @@ public class CGIDTO {
 		private String language;
 		private int year;
 		
-		//������
+		//기본생성자
 		public Builder() {}
 		
 		//Setter

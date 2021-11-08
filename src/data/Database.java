@@ -66,12 +66,7 @@ public class Database {
 		}
 		return true;
 	}
-	
-	//insertData
-	public void insertC19Data() {
-		
-	}
-	
+
 	//CSV파일의 데이터를 DB에 저장
 	public void insertCGIData() throws SQLException {
 		
@@ -235,5 +230,18 @@ public class Database {
         }
 		
 		return csvList;
+	}
+	
+	public ArrayList<CGIDTO> selectCGIDataName(String keyword){
+		return new ArrayList<CGIDTO>();
+	}
+	public ArrayList<CGIDTO> selectCGIDataLocation(String keyword){
+		return new ArrayList<CGIDTO>();
+	}
+	public ArrayList<CGIDTO> selectCGIDataWeather(String keyword){
+		return new ArrayList<CGIDTO>();
+	}
+	public ArrayList<CGIDTO> selectCGIDataReligion(String keyword){
+		return new ArrayList<CGIDTO>();
 	}
 }
