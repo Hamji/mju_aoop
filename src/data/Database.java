@@ -52,7 +52,7 @@ public class Database {
 			//DB드라이버가져오기, ClassNotFoundException, SQLException
 			Class.forName(DB_DRIVER_CLASS);
 			con = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-			System.out.println("DB���� ����");
+			System.out.println("DB연결 성공");
 		} catch(ClassNotFoundException e) {
 			e.printStackTrace();
 			return false;
@@ -78,7 +78,7 @@ public class Database {
 		try {
 			this.connectDB();
             
-            String sql = "INSERT INTO �����ͺ��̽� �̸� (country, country_code, capital, location, major_city, religion, major_groups, media, area, area_description, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO 데이터베이스 이름(country, country_code, capital, location, major_city, religion, major_groups, media, area, area_description, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             java.sql.PreparedStatement statement = this.con.prepareStatement(sql);
  
             CSV csv = new CSV();
@@ -130,7 +130,7 @@ public class Database {
 			connectDB();
             
 			//입력받은 문자열로 시작하는 문자열을 각 국가의 이름, 국가코드, 수도, 주요도시와 비교하고 같으면 select하는 sql문
-			String sql = "SELECT * FROM �����ͺ��̽� �̸� WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
+			String sql = "SELECT * FROM 데이터베이스 이름WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
 			
             java.sql.PreparedStatement statement = this.con.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();            
@@ -148,7 +148,7 @@ public class Database {
     			rg = rg.replace("{", "");
     			rg = rg.replace("}", "");
     			
-    			Pattern pattern = Pattern.compile("[��-�RA-Za-z]+\\d+[.]\\d+%|[��-�RA-Za-z]+\\d+%|[��-�RA-Za-z]+\\d+[-]\\d+%|[��-�RA-Za-z]+\\\\d+%[��-�RA-Za-z]+");
+    			Pattern pattern = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\\\d+%[가-힣A-Za-z]+");
     			Matcher m = pattern.matcher(rg);
     			List<String> rgData = new ArrayList<String>();
     			while(m.find()) {
@@ -179,7 +179,7 @@ public class Database {
     			mg = mg.replace("{", "");
     			mg = mg.replace("}", "");
 
-    			Pattern pattern2 = Pattern.compile("[��-�RA-Za-z]+\\d+[.]\\d+%|[��-�RA-Za-z]+\\d+%|[��-�RA-Za-z]+\\d+[-]\\d+%|[��-�RA-Za-z]+\\d+%[��-�RA-Za-z]+");
+    			Pattern pattern2 = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\d+%[가-힣A-Za-z]+");
     			Matcher m2 = pattern2.matcher(mg);
     			List<String> mgData = new ArrayList<String>();
     			while(m2.find()) {

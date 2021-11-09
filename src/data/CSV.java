@@ -65,11 +65,36 @@ public class CSV {
 	
 	}
 	
-	public void CGIDataToCSV(ArrayList<CGIDTO> list) {
-		//?
+	public void CGIDataToCSV(ArrayList<CGIDTO> list) throws IOException {
+		
+		FileWriter writer = new FileWriter("C:\\Users\\foot0\\Desktop\\test.csv");
+		
+		int i = 0;
+		while(i < list.size()) {
+			List<String> joinList = new ArrayList<String>();
+			joinList.add(list.get(i).getCountry());
+			joinList.add(list.get(i).getCountryCode());
+			joinList.add(list.get(i).getCapital());
+			joinList.add(list.get(i).getLocation());
+			joinList.add(list.get(i).getMajorCity());
+			joinList.add(list.get(i).getReligion().getRData().toString());
+			joinList.add(list.get(i).getMajorGroups().getMGData().toString());
+			joinList.add(list.get(i).getMedia());
+			joinList.add(Double.toString(list.get(i).getArea()));
+			joinList.add(list.get(i).getAreaDescription());
+			joinList.add(list.get(i).getLanguage());
+			joinList.add(Integer.toString(list.get(i).getYear()));
+			
+			writer.write(joinList.stream().collect(Collectors.joining(",")));
+			writer.write("\n"); 
+			
+			i++;
+		}
+		
+		writer.close();
 	}
 	
-	//csv���Ͽ��� �����͸� �����ϴ� �޼ҵ�
+	//csv파일에서 데이터를 가져옴
 	public ArrayList<CGIDTO> getCGIData() {
 		ArrayList<CGIDTO> csvList = new ArrayList<CGIDTO>();
 		String csvFilePath = "\resource";
@@ -80,27 +105,27 @@ public class CSV {
 		 try {			 	
 			 	lineReader = new BufferedReader(new FileReader(csv));
 			 	
-			 	//�Ӽ� �̸����� ������ �����͵��� �������� ���� �� ���� ���� �д´�. 
+			 	//속성 이름들을 제외한 데이터들을 가져오기 위해 한 줄을 먼저 읽는다. 
 			 	lineReader.readLine();
 			 	
 	            while ((lineText = lineReader.readLine()) != null) {
-	            	//,�� �� �Ӽ��� ������ �� ""���� ,�� �����Ͽ� �����Ѵ�.
+	            	//,로 각 속성을 구분할 때 ""안의 ,는 무시하여 구분한다.
 	                String[] data = lineText.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 
-	    			//���� ó��
+	    			//종교 처리
 	    			String rg = data[6];
 	    			Religion filteredRg = new Religion();	    			
 	    			
-	    			//������ �� ���ʿ��� �������� ���� ó��
+	    			//데이터 중 불필요한 정보들을 삭제 처리
 	    			rg = rg.replace("\"", "");
-	    			rg = rg.replace(" ��", "");
+	    			rg = rg.replace(" 등", "");
 	    			rg = rg.replace(",", "");
 	    			rg = rg.replace(" ", "");
 	    			rg = rg.replace("(", "");
 	    			rg = rg.replace(")", "");
 	    			
-	    			//���Խ��� �̿��Ͽ� ���Ͽ� �´� �����͸� �����Ͽ� Arraylist�� ����
-	    			Pattern pattern = Pattern.compile("[��-�RA-Za-z]+\\d+[.]\\d+%|[��-�RA-Za-z]+\\d+%|[��-�RA-Za-z]+\\d+[-]\\d+%|[��-�RA-Za-z]+\\\\d+%[��-�RA-Za-z]+");
+	    			//", "",""*" 등으로 각 종교를 구분하여 데이터를 분리하여 배열로 저장
+	    			Pattern pattern = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\\\d+%[가-힣A-Za-z]+");
 	    			Matcher m = pattern.matcher(rg);
 	    			List<String> rgData = new ArrayList<String>();
 	    			while(m.find()) {
@@ -108,18 +133,18 @@ public class CSV {
 	    				rgData.add(result);
 	    			}
 	    			
-	    			//��Ÿ �׸��� �ߺ��� ó�� & ������ 100%�� �ȵǴ� ������ ó�� & ������ ���������� �־��� �������� ó�� 
+	    			//종교 비율이 100%가 아닌 곳에 기타를 추가한다
 	    			Double sumRate = 0.0;
 	    			int gita = -1;
 	    			
 	    			for(int i = 0; i < rgData.size(); i++) {	 			
 	    				sumRate = sumRate + Double.parseDouble(rgData.get(i).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""));
 	    				
-	    				if((rgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("��Ÿ")) {
-	    					// "��Ÿ" �׸��� �̹� ������, �� �׸��� �ε����� ����
+	    				if((rgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("기타")) {
+	    					// "기타" 항목의 인덕스를 구함
 	    					gita = i;
 	    				}
-	    				//������ ó��
+	    				//비율 범위 처리
 	    				if(rgData.get(i).contains("-")) {
 	    					int index = rgData.get(i).indexOf("-");
 	    					String substr1 = rgData.get(i).substring(index-2, index);
@@ -131,26 +156,25 @@ public class CSV {
 	    				
 	    			}
 	    			
-	    			//��Ÿ ó��
+	    			//기타 처리
 	    			if(!rgData.isEmpty()) {
 		    			if(sumRate < 100.0) {
 		    				if(gita == -1) {
 			    				Double toAdd = 100.0 - sumRate;	 
 		    					toAdd = Math.round(toAdd * 100) / 100.0;
-		    					rgData.add("��Ÿ" + Double.toString(toAdd) + "%");
+		    					rgData.add("기타" + Double.toString(toAdd) + "%");
 			    			} else {
 			    				Double toAdd = 100.0 - sumRate;
 			    				toAdd = Math.round(toAdd * 100) / 100.0;
-			    				rgData.set(gita ,"��Ÿ" + Double.toString(toAdd + Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+			    				rgData.set(gita ,"기타" + Double.toString(toAdd + Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 			    			}
 		    			} else if(gita != -1 && sumRate >= 100.0) {
-		    				rgData.set(gita ,"��Ÿ" + Double.toString(Math.round(Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "")) * 100)/100.0) + "%");
+		    				rgData.set(gita ,"기타" + Double.toString(Math.round(Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "")) * 100)/100.0) + "%");
 		    			}
 	    			}
 	    			
 	    			System.out.println(rgData);
     			
-	    			//�� ���� �����͸� �̸��� ������ ����� Religion�� ����
 	    			String rg_name;
 	    			String rg_number;
 	    			Double rg_rate;	
@@ -160,8 +184,8 @@ public class CSV {
 	    			for(int i = 0; i< rgArray.length; i++) {
 	    				System.out.println(rgArray[i]);
 	    				rg_name = rgArray[i].replaceAll("([0-9.]+[%]?)", "");
-	    				if(rg_name.contains("��Ÿ")) {
-	    					rg_name = "��Ÿ";
+	    				if(rg_name.contains("기타")) {
+	    					rg_name = "기타";
 	    				}	    				
 	    				rg_number = rgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
 	    				rg_rate = Double.parseDouble(rg_number);
@@ -171,20 +195,20 @@ public class CSV {
 	    			
 	    			
 	    			
-	    			//�׷� ����
+	    			//주요민족 가공
 	    			String mg = data[7];
 	    			MajorGroups filteredMg = new MajorGroups();	
 	    			
-	    			//������ �� ���ʿ��� �������� ���� ó��
+	    			//데이터 중 불필요한 정보들을 삭제 처리
 	    			mg = mg.replace("\"", "");
-	    			mg = mg.replace(" ��", "");
+	    			mg = mg.replace(" 등", "");
 	    			mg = mg.replace(",", "");
 	    			mg = mg.replace(" ", "");
 	    			mg = mg.replace("(", "");
 	    			mg = mg.replace(")", "");
 	    			
-	    			//���Խ��� �̿��Ͽ� ���Ͽ� �´� �����͸� �����Ͽ� Arraylist�� ����
-	    			Pattern pattern2 = Pattern.compile("[��-�RA-Za-z]+\\d+[.]\\d+%|[��-�RA-Za-z]+\\d+%|[��-�RA-Za-z]+\\d+[-]\\d+%|[��-�RA-Za-z]+\\d+%[��-�RA-Za-z]+");
+	    			//", "",""*" 등으로 각 종교를 구분하여 데이터를 분리하여 배열로 저장
+	    			Pattern pattern2 = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\d+%[가-힣A-Za-z]+");
 	    			Matcher m2 = pattern2.matcher(mg);
 	    			List<String> mgData = new ArrayList<String>();
 	    			while(m2.find()) {
@@ -192,7 +216,7 @@ public class CSV {
 	    				mgData.add(result);
 	    			}
 	    			
-	    			//��Ÿ �׸��� �ߺ��� ó�� & ������ 100%�� �ȵǴ� ������ ó�� & ������ ���������� �־��� �������� ó�� 
+	    			//주요민족 비율이 100%가 아닌 곳에 기타를 추가한다
 	    			Double sumRate1 = 0.0;
 	    			int gita1 = -1;
 	    			
@@ -200,10 +224,10 @@ public class CSV {
 	    				
 	    				sumRate1 = sumRate1 + Double.parseDouble(mgData.get(i).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""));
 	    				
-	    				if((mgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("��Ÿ")) {
+	    				if((mgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("기타")) {
 	    					gita1 = i;
 	    				}
-	    				//������ ó��
+	    				//주요민족 비율 범위 처리
 	    				if(mgData.get(i).contains("-")) {
 	    					int index = mgData.get(i).indexOf("-");
 	    					String substr1 = mgData.get(i).substring(index-2, index);
@@ -214,26 +238,25 @@ public class CSV {
 	    				}
 	    				
 	    			}
-	    			//��Ÿ ó��
+	    			//기타 처리
 	    			if(!mgData.isEmpty()) {
 		    			if(sumRate1 <100.0) {
 			    			if(gita1 == -1) {
 			    				Double toAdd = 100.0 - sumRate1;	 
 		    					toAdd = Math.round(toAdd * 100) / 100.0;
-		    					mgData.add("��Ÿ" + Double.toString(toAdd) + "%");
+		    					mgData.add("기타" + Double.toString(toAdd) + "%");
 			    			} else {
 			    				Double toAdd = 100.0 - sumRate1;
 			    				toAdd = Math.round(toAdd * 100) / 100.0;
-			    				mgData.set(gita1 ,"��Ÿ" + Double.toString(toAdd + Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+			    				mgData.set(gita1 ,"기타" + Double.toString(toAdd + Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 			    			}
 		    			} else if(gita1 != -1 && sumRate1 >= 100.0) {
-		    				mgData.set(gita1 ,"��Ÿ" + Double.toString(Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+		    				mgData.set(gita1 ,"기타" + Double.toString(Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 		    			}
 	    			}	    			
 	    			
 	    			System.out.println(mgData);
     			
-	    			//�� �ֿ���� �����͸� �̸��� ������ ����� MajorGroups�� ����
 	    			String mg_name;
 	    			String mg_number;
 	    			Double mg_rate;
@@ -243,8 +266,8 @@ public class CSV {
 
 	    			for(int i = 0; i< mgArray.length; i++) {	
 	    				mg_name = mgArray[i].replaceAll("([0-9.]+[%]?)", "");
-	    				if(mg_name.contains("��Ÿ")) {
-	    					mg_name = "��Ÿ";
+	    				if(mg_name.contains("기타")) {
+	    					mg_name = "기타";
 	    				}	    	
 	    				mg_number = mgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
 	    				mg_rate = Double.parseDouble(mg_number);
@@ -252,12 +275,12 @@ public class CSV {
 	    				filteredMg.setMGData(mg_name, mg_rate);
 	    			}
 	    			
-	    			//���� �׸��� �� ������ ó��
+	    			//면적이 없는 나라에 대한 처리
 	    			if(data[9] == "") {
 	    				data[9] = "0.0";
 	    			}	    			    			
 	    			
-	    			//Builder ó��
+	    			//Builder 처리
 	    			CGIDTO dto = new CGIDTO.Builder()
 	    					.setCountry(data[0])	
 	    					.setCountryCode(data[1])
@@ -275,7 +298,7 @@ public class CSV {
 	    					.setYear(Integer.parseInt(data[13]))
 	    					.build();
 	    			
-	    			//�� ������ CGIDTO ��ü�� ArrayList�� �߰�
+	    			//각 나라의 CGIDTO 데이터를 리스트에 추가함
 	                csvList.add(dto);
 	            }
 	            
@@ -286,7 +309,7 @@ public class CSV {
 	        } finally {
 	            try {
 	                if (lineReader != null) { 
-	                	lineReader.close(); // ��� �� BufferedReader�� �ݾ��ش�.
+	                	lineReader.close(); // 사용 후 BufferedReader를 닫아준다.
 	                }
 	            } catch(IOException e) {
 	                e.printStackTrace();
