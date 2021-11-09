@@ -67,7 +67,7 @@ public class CSV {
 	
 	public void CGIDataToCSV(ArrayList<CGIDTO> list) throws IOException {
 		
-		FileWriter writer = new FileWriter("C:\\Users\\foot0\\Desktop\\test.csv");
+		FileWriter writer = new FileWriter("파일 저장 경로");
 		
 		int i = 0;
 		while(i < list.size()) {
