@@ -1,24 +1,19 @@
 package data;
 
-import java.beans.Statement;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Properties;
 
 import data.dto.CGIDTO;
 import data.dto.MajorGroups;
 import data.dto.Religion;
-import data.dto.CGIDTO.Builder;
-import data.CSV;
 
 public class Database {
 	//데이터베이스 Connection
@@ -31,7 +26,6 @@ public class Database {
 	private String DB_USERNAME;
 	private String DB_PASSWORD;
 
-	
 	//생성자
 	public Database() {
 		con = null;
@@ -52,7 +46,7 @@ public class Database {
 			//DB드라이버가져오기, ClassNotFoundException, SQLException
 			Class.forName(DB_DRIVER_CLASS);
 			con = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
-			System.out.println("DB연결 성공");
+			System.out.println("DB연결성공");
 		} catch(ClassNotFoundException e) {
 			e.printStackTrace();
 			return false;
@@ -68,48 +62,40 @@ public class Database {
 	}
 
 	//CSV파일의 데이터를 DB에 저장
-	public void insertCGIData() throws SQLException {
-		
+	public void insertCGIData(ArrayList<CGIDTO> dtoList) throws SQLException {
 		try {
-			this.connectDB();
+			//DB Connection, config
+			connectDB();
+            con.setAutoCommit(false);
+			//Set SQL
+            String sql = "INSERT INTO cgi (country, country_code, capital, location, major_city, religion, major_groups, media, area, area_description, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement pst = con.prepareStatement(sql);
             
-            String sql = "INSERT INTO 데이터베이스 이름(country, country_code, capital, location, major_city, religion, major_groups, media, area, area_description, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            java.sql.PreparedStatement statement = this.con.prepareStatement(sql);
- 
-            CSV csv = new CSV();
-            ArrayList<CGIDTO> csvList = new ArrayList<CGIDTO>();
-            
-          //csv파일의 데이터를 가져옴
-            csvList = csv.getCGIData();
-            
-            int i = 0;
-            while(i < csvList.size()) {
-            	statement.setString(1, csvList.get(i).getCountry());
-            	statement.setString(2, csvList.get(i).getCountryCode());
-            	statement.setString(3, csvList.get(i).getCapital());
-            	statement.setString(4, csvList.get(i).getLocation());
-            	statement.setString(5, csvList.get(i).getMajorCity());
-            	statement.setString(6, csvList.get(i).getReligion().getRData().toString());
-            	statement.setString(7, csvList.get(i).getMajorGroups().getMGData().toString());            	
-            	statement.setString(8, csvList.get(i).getMedia());
-            	statement.setDouble(9, csvList.get(i).getArea());
-            	statement.setString(10, csvList.get(i).getAreaDescription());
-            	statement.setString(11, csvList.get(i).getLanguage());
-            	statement.setInt(12, csvList.get(i).getYear());
-            
-            	statement.execute();
-            	i = i + 1;
+            //Make Query
+            for(CGIDTO dto: dtoList) {
+            	pst.setString(1, dto.getCountry());
+            	pst.setString(2, dto.getCountryCode());
+            	pst.setString(3, dto.getCapital());
+            	pst.setString(4, dto.getLocation());
+            	pst.setString(5, dto.getMajorCity());
+            	pst.setString(6, dto.getReligion().toString());
+            	pst.setString(7, dto.getMajorGroups().toString());
+            	pst.setString(8, dto.getMedia());
+            	pst.setDouble(9, dto.getArea());
+            	pst.setString(10, dto.getAreaDescription());
+            	pst.setString(11, dto.getLanguage());
+            	pst.setInt(12, dto.getYear());
+            	//Execute Query
+            	pst.execute();
             }
-            
-            this.con.commit();
-            this.con.close();
- 
+            //Commit and close
+            con.commit();
+            con.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
- 
-          //실패 시, 롤백함
+        	ex.printStackTrace();
+            //실패 시, 롤백함
             try {
-            	 this.con.rollback();
+            	 con.rollback();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -119,129 +105,201 @@ public class Database {
 	
 	//입력받은 문자열과 관련된 모든 CGI 데이터를 추출함
 	public ArrayList<CGIDTO> selectCGIData(String filter) {
-		ArrayList<CGIDTO> csvList = new ArrayList<CGIDTO>();
+		ArrayList<CGIDTO> cgiList = new ArrayList<CGIDTO>();
+		try {
+			//DB연결
+			connectDB();
+			//입력받은 문자열로 시작하는 문자열을 각 국가의 이름, 국가코드, 수도, 주요도시와 비교하고 같으면 select하는 sql문
+			String sql = "SELECT * FROM cgi WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();            
+            while(rs.next()) {            	
+            	CGIDTO dto = new CGIDTO.Builder()
+            			.setCountry(rs.getString(1))
+            			.setCountryCode(rs.getString(2))
+            			.setCapital(rs.getString(3))
+            			.setLocation(rs.getString(4))
+            			.setMajorCity(rs.getString(5))
+            			.setReligion(transRData(rs.getString(6)))
+            			.setMajorGroups(transMGData(rs.getString(7)))
+            			.setMedia(rs.getString(8))
+            			.setArea(rs.getDouble(9))
+            			.setAreaDescription(rs.getString(10))
+            			.setLanguage(rs.getString(11))
+            			.setYear(rs.getInt(12))
+            			.build();
+            	cgiList.add(dto);
+            }
+            //DB커넥션 종료
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return cgiList;
+	}
+	
+	//국가명을 기준으로 검색
+	public ArrayList<CGIDTO> selectCGIDataName(String keyword){
+		ArrayList<CGIDTO> cgiList = new ArrayList<CGIDTO>();
+		try {
+			//DB연결
+			connectDB();
+			//sql Query set
+			String sql = "SELECT * FROM cgi WHERE country LIKE ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, "%"+keyword+"%");
+            //executeQuery
+            ResultSet rs = pst.executeQuery();
+            //객체 리스트로 저장
+            while(rs.next()) {            	
+            	CGIDTO dto = new CGIDTO.Builder()
+            			.setCountry(rs.getString(1))
+            			.setCountryCode(rs.getString(2))
+            			.setCapital(rs.getString(3))
+            			.setLocation(rs.getString(4))
+            			.setMajorCity(rs.getString(5))
+            			.setReligion(transRData(rs.getString(6)))
+            			.setMajorGroups(transMGData(rs.getString(7)))
+            			.setMedia(rs.getString(8))
+            			.setArea(rs.getDouble(9))
+            			.setAreaDescription(rs.getString(10))
+            			.setLanguage(rs.getString(11))
+            			.setYear(rs.getInt(12))
+            			.build();
+            	cgiList.add(dto);
+            }
+            //DB커넥션 종료
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return cgiList;
+	}
+	//위치정보를 기준으로 검색
+	public ArrayList<CGIDTO> selectCGIDataLocation(String keyword){
+		ArrayList<CGIDTO> cgiList = new ArrayList<CGIDTO>();
+		try {
+			connectDB();
+			//sqlQuery set
+			String sql = "SELECT * FROM cgi WHERE location LIKE ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, "%"+keyword+"%");
+            //execute Query
+            ResultSet rs = pst.executeQuery();            
+            //객체리스트로 변환
+            while(rs.next()) {            	
+            	CGIDTO dto = new CGIDTO.Builder()
+            			.setCountry(rs.getString(1))
+            			.setCountryCode(rs.getString(2))
+            			.setCapital(rs.getString(3))
+            			.setLocation(rs.getString(4))
+            			.setMajorCity(rs.getString(5))
+            			.setReligion(transRData(rs.getString(6)))
+            			.setMajorGroups(transMGData(rs.getString(7)))
+            			.setMedia(rs.getString(8))
+            			.setArea(rs.getDouble(9))
+            			.setAreaDescription(rs.getString(10))
+            			.setLanguage(rs.getString(11))
+            			.setYear(rs.getInt(12))
+            			.build();
+            	cgiList.add(dto);
+            }
+            //DB커넥션 종료
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return cgiList;
+	}
+	//기후를 기준으로 검색
+	public ArrayList<CGIDTO> selectCGIDataWeather(String keyword){
+		ArrayList<CGIDTO> cgiList = new ArrayList<CGIDTO>();
 		
 		try {
 			connectDB();
-            
-			//입력받은 문자열로 시작하는 문자열을 각 국가의 이름, 국가코드, 수도, 주요도시와 비교하고 같으면 select하는 sql문
-			String sql = "SELECT * FROM 데이터베이스 이름WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
-			
-            java.sql.PreparedStatement statement = this.con.prepareStatement(sql);
-            ResultSet rs = statement.executeQuery();            
-
-            //속성 이름이 들어간 처음 행을 건너뜀
-            int i = 1;
-            
+			//sql Query Set
+			String sql = "SELECT * FROM cgi WHERE weather LIKE ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, "%"+keyword+"%");
+            //execute Query
+            ResultSet rs = pst.executeQuery();      
+            //객체리스트로 변환
             while(rs.next()) {            	
-            	
-            	//종교 처리
-            	String rg = rs.getString(6);
-            	Religion filteredRg = new Religion();
-            	rg = rg.replace(",", "");
-    			rg = rg.replace(" ", "");
-    			rg = rg.replace("{", "");
-    			rg = rg.replace("}", "");
-    			
-    			Pattern pattern = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\\\d+%[가-힣A-Za-z]+");
-    			Matcher m = pattern.matcher(rg);
-    			List<String> rgData = new ArrayList<String>();
-    			while(m.find()) {
-    				String result = m.group();
-    				rgData.add(result);
-    			}
-    			
-    			String rg_name;
-    			String rg_number;
-    			Double rg_rate;	
-    			
-    			String[] rgArray = (String[]) rgData.toArray(new String[rgData.size()]);
-    			
-    			for(int j = 0; j< rgArray.length; j++) {
-    				System.out.println(rgArray[j]);
-    				rg_name = rgArray[j].replaceAll("([0-9.]+[%]?)", ""); 				
-    				rg_number = rgArray[j].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
-    				rg_rate = Double.parseDouble(rg_number);
-    				
-    				filteredRg.setRData(rg_name, rg_rate);	    				
-    			}
-            	
-    			//주요민족 처리
-    			String mg = rs.getString(7);
-    			MajorGroups filteredMg = new MajorGroups();	
-    			mg = mg.replace(",", "");
-    			mg = mg.replace(" ", "");
-    			mg = mg.replace("{", "");
-    			mg = mg.replace("}", "");
-
-    			Pattern pattern2 = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\d+%[가-힣A-Za-z]+");
-    			Matcher m2 = pattern2.matcher(mg);
-    			List<String> mgData = new ArrayList<String>();
-    			while(m2.find()) {
-    				String result = m2.group();
-    				mgData.add(result);
-    			}
-    			
-    			String mg_name;
-    			String mg_number;
-    			Double mg_rate;
-    			
-    			String[] mgArray = (String[]) mgData.toArray(new String[mgData.size()]);
-
-    			for(int k = 0; k< mgArray.length; k++) {	
-    				mg_name = mgArray[k].replaceAll("([0-9.]+[%]?)", "");    	
-    				mg_number = mgArray[k].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
-    				mg_rate = Double.parseDouble(mg_number);
-    				
-    				filteredMg.setMGData(mg_name, mg_rate);
-    			}
-            	
-    			//Builder 처리
-    			CGIDTO dto = new CGIDTO.Builder()
-    					.setCountry(rs.getString(1)) 
-    					.setCountryCode(rs.getString(2))
-    					.setCapital(rs.getString(3))
-    					.setLocation(rs.getString(4))
-    					.setMajorCity(rs.getString(5))
-    					.setReligion(filteredRg)
-    					.setMajorGroups(filteredMg)
-    					.setMedia(rs.getString(8))
-    					.setArea(Double.parseDouble(rs.getString(9)))
-    					.setAreaDescription(rs.getString(10))
-    					.setLanguage(rs.getString(11))
-    					.setYear(Integer.parseInt(rs.getString(12)))
-    					.build();
-            	
-            	csvList.add(dto);
-            	
-            	i = i + 1;
+            	CGIDTO dto = new CGIDTO.Builder()
+            			.setCountry(rs.getString(1))
+            			.setCountryCode(rs.getString(2))
+            			.setCapital(rs.getString(3))
+            			.setLocation(rs.getString(4))
+            			.setMajorCity(rs.getString(5))
+            			.setReligion(transRData(rs.getString(6)))
+            			.setMajorGroups(transMGData(rs.getString(7)))
+            			.setMedia(rs.getString(8))
+            			.setArea(rs.getDouble(9))
+            			.setAreaDescription(rs.getString(10))
+            			.setLanguage(rs.getString(11))
+            			.setYear(rs.getInt(12))
+            			.build();
+            	cgiList.add(dto);
             }
-            
-            this.con.close();
- 
-        } catch (SQLException ex) {
-            ex.printStackTrace();
- 
-            try {
-            	 this.con.rollback();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            //DB커넥션 종료
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-		
-		return csvList;
+		return cgiList;
+	}
+	//종교를 기준으로 검색
+	public ArrayList<CGIDTO> selectCGIDataReligion(String keyword){
+		ArrayList<CGIDTO> cgiList = new ArrayList<CGIDTO>();
+		try {
+			connectDB();
+			//sql Query Set
+			String sql = "SELECT * FROM cgi WHERE religion LIKE ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, "%"+keyword+"%");
+            //execute Query
+            ResultSet rs = pst.executeQuery();            
+            //객체리스트로 변환
+            while(rs.next()) {            	
+            	CGIDTO dto = new CGIDTO.Builder()
+            			.setCountry(rs.getString(1))
+            			.setCountryCode(rs.getString(2))
+            			.setCapital(rs.getString(3))
+            			.setLocation(rs.getString(4))
+            			.setMajorCity(rs.getString(5))
+            			.setReligion(transRData(rs.getString(6)))
+            			.setMajorGroups(transMGData(rs.getString(7)))
+            			.setMedia(rs.getString(8))
+            			.setArea(rs.getDouble(9))
+            			.setAreaDescription(rs.getString(10))
+            			.setLanguage(rs.getString(11))
+            			.setYear(rs.getInt(12))
+            			.build();
+            	cgiList.add(dto);
+            }
+            //DB커넥션 종료
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return cgiList;
 	}
 	
-	public ArrayList<CGIDTO> selectCGIDataName(String keyword){
-		return new ArrayList<CGIDTO>();
+	//String Data 객체로 변환
+	private Religion transRData(String data) {
+		Religion result = new Religion();
+		String[] tmp = data.split(",");
+		for(String s : tmp) {
+			result.setRData(s.split(":")[0].toString(), Double.parseDouble(s.split(":")[1]));
+		}		
+		return result; 
 	}
-	public ArrayList<CGIDTO> selectCGIDataLocation(String keyword){
-		return new ArrayList<CGIDTO>();
-	}
-	public ArrayList<CGIDTO> selectCGIDataWeather(String keyword){
-		return new ArrayList<CGIDTO>();
-	}
-	public ArrayList<CGIDTO> selectCGIDataReligion(String keyword){
-		return new ArrayList<CGIDTO>();
+	private MajorGroups transMGData(String data) {
+		MajorGroups result = new MajorGroups();
+		String[] tmp = data.split(",");
+		for(String s : tmp) {
+			result.setMGData(s.split(":")[0].toString(), Double.parseDouble(s.split(":")[1]));
+		}		
+		return result; 
 	}
 }
