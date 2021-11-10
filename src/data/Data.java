@@ -45,6 +45,10 @@ public class Data {
 		};
 		return resultDTO;
 	}
+	//검색된 항목 반환
+	public ArrayList<CGIDTO> getSearchData(String keyword){
+		return db.selectCGIData(keyword);
+	}
 	
 	//종교로 검색
 	public ArrayList<CGIDTO> getDataReligion(String keyword) {
