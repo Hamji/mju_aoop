@@ -62,29 +62,57 @@ public class Database {
 	}
 
 	//CSV파일의 데이터를 DB에 저장
-	public void insertCGIData(ArrayList<CGIDTO> dtoList) throws SQLException {
+	public void insertCGIData(ArrayList<CGIDTO> dtoList){
+		//테이블이 없을경우 생성
+		try {
+			String cTableSQL = "CREATE TABLE IF NOT EXISTS 'cgi' "
+					+ "'country' varchar(50) NOT NULL,"
+					+ "'country_code' varchar(2) DEFAULT NULL,"
+					+ "'capital' varchar(100) DEFAULT NULL,"
+					+ "'climate' varchar(200) DEFAULT NULL,"
+					+ "'locattion' varchar(200) DEFAULT NULL,"
+					+ "'major_city` varchar(200) DEFAULT NULL,"
+					+ "'religion` text,"
+					+ "'major_group` text,"
+					+ "'media` text,"
+					+ "'area` double DEFAULT NULL,"
+					+ "'area_source` varchar(100) DEFAULT NULL,"
+					+ "'area_desc` varchar(100) DEFAULT NULL,"
+					+ "'language` text,"
+					+ "'year` int DEFAULT NULL,"
+					+ "PRIMARY KEY (`country`)"
+					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci";
+			connectDB();
+			PreparedStatement pst = con.prepareStatement(cTableSQL);
+			pst.execute();
+			con.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		//데이터삽입
 		try {
 			//DB Connection, config
 			connectDB();
             con.setAutoCommit(false);
 			//Set SQL
-            String sql = "INSERT INTO cgi (country, country_code, capital, location, major_city, religion, major_groups, media, area, area_description, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO cgi (country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pst = con.prepareStatement(sql);
-            
             //Make Query
             for(CGIDTO dto: dtoList) {
             	pst.setString(1, dto.getCountry());
             	pst.setString(2, dto.getCountryCode());
             	pst.setString(3, dto.getCapital());
-            	pst.setString(4, dto.getLocation());
-            	pst.setString(5, dto.getMajorCity());
-            	pst.setString(6, dto.getReligion().toString());
-            	pst.setString(7, dto.getMajorGroups().toString());
-            	pst.setString(8, dto.getMedia());
-            	pst.setDouble(9, dto.getArea());
-            	pst.setString(10, dto.getAreaDescription());
-            	pst.setString(11, dto.getLanguage());
-            	pst.setInt(12, dto.getYear());
+            	pst.setString(4, dto.getClimate());
+            	pst.setString(5, dto.getLocation());
+            	pst.setString(6, dto.getMajorCity());
+            	pst.setString(7, dto.getReligion().toString());
+            	pst.setString(8, dto.getMajorGroups().toString());
+            	pst.setString(9, dto.getMedia());
+            	pst.setDouble(10, dto.getArea());
+            	pst.setString(11, dto.getAreaSource());
+            	pst.setString(12, dto.getAreaDescription());
+            	pst.setString(13, dto.getLanguage());
+            	pst.setInt(14, dto.getYear());
             	//Execute Query
             	pst.execute();
             }
@@ -110,7 +138,7 @@ public class Database {
 			//DB연결
 			connectDB();
 			//입력받은 문자열로 시작하는 문자열을 각 국가의 이름, 국가코드, 수도, 주요도시와 비교하고 같으면 select하는 sql문
-			String sql = "SELECT * FROM cgi WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
             PreparedStatement pst = con.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();            
             while(rs.next()) {            	
@@ -118,15 +146,17 @@ public class Database {
             			.setCountry(rs.getString(1))
             			.setCountryCode(rs.getString(2))
             			.setCapital(rs.getString(3))
-            			.setLocation(rs.getString(4))
-            			.setMajorCity(rs.getString(5))
-            			.setReligion(transRData(rs.getString(6)))
-            			.setMajorGroups(transMGData(rs.getString(7)))
-            			.setMedia(rs.getString(8))
-            			.setArea(rs.getDouble(9))
-            			.setAreaDescription(rs.getString(10))
-            			.setLanguage(rs.getString(11))
-            			.setYear(rs.getInt(12))
+            			.setClimate(rs.getString(4))
+            			.setLocation(rs.getString(5))
+            			.setMajorCity(rs.getString(6))
+            			.setReligion(transRData(rs.getString(7)))
+            			.setMajorGroups(transMGData(rs.getString(8)))
+            			.setMedia(rs.getString(9))
+            			.setArea(rs.getDouble(10))
+            			.setAreaSource(rs.getString(11))
+            			.setAreaDescription(rs.getString(12))
+            			.setLanguage(rs.getString(13))
+            			.setYear(rs.getInt(14))
             			.build();
             	cgiList.add(dto);
             }
@@ -145,7 +175,7 @@ public class Database {
 			//DB연결
 			connectDB();
 			//sql Query set
-			String sql = "SELECT * FROM cgi WHERE country LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //executeQuery
@@ -156,15 +186,17 @@ public class Database {
             			.setCountry(rs.getString(1))
             			.setCountryCode(rs.getString(2))
             			.setCapital(rs.getString(3))
-            			.setLocation(rs.getString(4))
-            			.setMajorCity(rs.getString(5))
-            			.setReligion(transRData(rs.getString(6)))
-            			.setMajorGroups(transMGData(rs.getString(7)))
-            			.setMedia(rs.getString(8))
-            			.setArea(rs.getDouble(9))
-            			.setAreaDescription(rs.getString(10))
-            			.setLanguage(rs.getString(11))
-            			.setYear(rs.getInt(12))
+            			.setClimate(rs.getString(4))
+            			.setLocation(rs.getString(5))
+            			.setMajorCity(rs.getString(6))
+            			.setReligion(transRData(rs.getString(7)))
+            			.setMajorGroups(transMGData(rs.getString(8)))
+            			.setMedia(rs.getString(9))
+            			.setArea(rs.getDouble(10))
+            			.setAreaSource(rs.getString(11))
+            			.setAreaDescription(rs.getString(12))
+            			.setLanguage(rs.getString(13))
+            			.setYear(rs.getInt(14))
             			.build();
             	cgiList.add(dto);
             }
@@ -181,7 +213,7 @@ public class Database {
 		try {
 			connectDB();
 			//sqlQuery set
-			String sql = "SELECT * FROM cgi WHERE location LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE location LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
@@ -192,15 +224,17 @@ public class Database {
             			.setCountry(rs.getString(1))
             			.setCountryCode(rs.getString(2))
             			.setCapital(rs.getString(3))
-            			.setLocation(rs.getString(4))
-            			.setMajorCity(rs.getString(5))
-            			.setReligion(transRData(rs.getString(6)))
-            			.setMajorGroups(transMGData(rs.getString(7)))
-            			.setMedia(rs.getString(8))
-            			.setArea(rs.getDouble(9))
-            			.setAreaDescription(rs.getString(10))
-            			.setLanguage(rs.getString(11))
-            			.setYear(rs.getInt(12))
+            			.setClimate(rs.getString(4))
+            			.setLocation(rs.getString(5))
+            			.setMajorCity(rs.getString(6))
+            			.setReligion(transRData(rs.getString(7)))
+            			.setMajorGroups(transMGData(rs.getString(8)))
+            			.setMedia(rs.getString(9))
+            			.setArea(rs.getDouble(10))
+            			.setAreaSource(rs.getString(11))
+            			.setAreaDescription(rs.getString(12))
+            			.setLanguage(rs.getString(13))
+            			.setYear(rs.getInt(14))
             			.build();
             	cgiList.add(dto);
             }
@@ -218,7 +252,7 @@ public class Database {
 		try {
 			connectDB();
 			//sql Query Set
-			String sql = "SELECT * FROM cgi WHERE weather LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE weather LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
@@ -229,15 +263,17 @@ public class Database {
             			.setCountry(rs.getString(1))
             			.setCountryCode(rs.getString(2))
             			.setCapital(rs.getString(3))
-            			.setLocation(rs.getString(4))
-            			.setMajorCity(rs.getString(5))
-            			.setReligion(transRData(rs.getString(6)))
-            			.setMajorGroups(transMGData(rs.getString(7)))
-            			.setMedia(rs.getString(8))
-            			.setArea(rs.getDouble(9))
-            			.setAreaDescription(rs.getString(10))
-            			.setLanguage(rs.getString(11))
-            			.setYear(rs.getInt(12))
+            			.setClimate(rs.getString(4))
+            			.setLocation(rs.getString(5))
+            			.setMajorCity(rs.getString(6))
+            			.setReligion(transRData(rs.getString(7)))
+            			.setMajorGroups(transMGData(rs.getString(8)))
+            			.setMedia(rs.getString(9))
+            			.setArea(rs.getDouble(10))
+            			.setAreaSource(rs.getString(11))
+            			.setAreaDescription(rs.getString(12))
+            			.setLanguage(rs.getString(13))
+            			.setYear(rs.getInt(14))
             			.build();
             	cgiList.add(dto);
             }
@@ -254,7 +290,7 @@ public class Database {
 		try {
 			connectDB();
 			//sql Query Set
-			String sql = "SELECT * FROM cgi WHERE religion LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE religion LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
@@ -265,15 +301,17 @@ public class Database {
             			.setCountry(rs.getString(1))
             			.setCountryCode(rs.getString(2))
             			.setCapital(rs.getString(3))
-            			.setLocation(rs.getString(4))
-            			.setMajorCity(rs.getString(5))
-            			.setReligion(transRData(rs.getString(6)))
-            			.setMajorGroups(transMGData(rs.getString(7)))
-            			.setMedia(rs.getString(8))
-            			.setArea(rs.getDouble(9))
-            			.setAreaDescription(rs.getString(10))
-            			.setLanguage(rs.getString(11))
-            			.setYear(rs.getInt(12))
+            			.setClimate(rs.getString(4))
+            			.setLocation(rs.getString(5))
+            			.setMajorCity(rs.getString(6))
+            			.setReligion(transRData(rs.getString(7)))
+            			.setMajorGroups(transMGData(rs.getString(8)))
+            			.setMedia(rs.getString(9))
+            			.setArea(rs.getDouble(10))
+            			.setAreaSource(rs.getString(11))
+            			.setAreaDescription(rs.getString(12))
+            			.setLanguage(rs.getString(13))
+            			.setYear(rs.getInt(14))
             			.build();
             	cgiList.add(dto);
             }
