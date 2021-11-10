@@ -17,4 +17,13 @@ public class MajorGroups {
 	public Map<String, Double> getMGData() {
 		return this.MGMap;
 	}
+	
+	//DB저장을 위한 String변
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		for(String key : MGMap.keySet()) {
+			result.append(key + ":" + MGMap.get(key).toString() + ",");
+		}
+		return result.toString();
+	}
 }

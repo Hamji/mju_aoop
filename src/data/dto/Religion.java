@@ -17,4 +17,13 @@ public class Religion {
 	public Map<String, Double> getRData() {
 		return this.RMap;
 	}
+	
+	//DB저장을 위한 String변
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		for(String key : RMap.keySet()) {
+			result.append(key + ":" + RMap.get(key).toString() + ",");
+		}
+		return result.toString();
+	}
 }

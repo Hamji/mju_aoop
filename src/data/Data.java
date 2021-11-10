@@ -17,10 +17,11 @@ public class Data {
 	public Data() {
 		db = new Database();
 		csv = new CSV();
+		//CSV파일을 읽어 DB에 삽입
+		db.insertCGIData(csv.getCGIData());
 	}
 	
 	//데이터를 가져오기 위한 메서드들
-	
 	//입력받은 문자열과 관련된 국가들의 개수를 리턴하는 함수
 	public int getCountryCount(String filter) {
 		ArrayList<CGIDTO> result = new ArrayList<CGIDTO>();
@@ -40,7 +41,6 @@ public class Data {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		};
 		return resultDTO;
