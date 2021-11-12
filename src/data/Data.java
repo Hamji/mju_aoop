@@ -1,13 +1,9 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import data.dto.CGIDTO;
-import data.dto.MajorGroups;
-import data.dto.Religion;
-import data.dto.CGIDTO.Builder;
-import data.CSV;
-import data.Database;
 
 public class Data {
 	//DB에 접근을 위한 DB객체, CSV읽기, 쓰기를 위한 CSV객체
@@ -29,8 +25,9 @@ public class Data {
 		return result.size();
 	}
 	
+	//이거 굳이 이렇게까지 해야하나요?
 	//입력받은 문자열과 관련된 국가들 중 선택한 국가의 정보를 리턴하는 함수
-	public CGIDTO getCountryData(String filter, String selected) throws Exception {
+	public CGIDTO getCountryData(String filter, String selected){
 		CGIDTO resultDTO = new CGIDTO();
 		
 		try {	
@@ -45,11 +42,27 @@ public class Data {
 		};
 		return resultDTO;
 	}
+	
+	//필터의 키워드들을 모두 검색하여 검색된 결과목록을 보내는 메서드
+	public ArrayList<CGIDTO> getFilteredData(String[] keywords){
+		//중복되는 국가정보를 제거하기 위해 HashSet사용
+		HashSet<CGIDTO> result = new HashSet<CGIDTO>();
+		//Keyword들을 반복하며 결과값을 저장
+		for(String keyword : keywords) {
+			ArrayList<CGIDTO> tmp = new ArrayList<>();
+			tmp = db.selectCGIData(keyword);
+			for(int i = 0;i<tmp.size();i++) {
+				result.add(tmp.get(i));
+			}
+		}
+		//결과값 ArrayList로 반환
+		return new ArrayList<CGIDTO>(result);
+	}
+	
 	//검색된 항목 반환
 	public ArrayList<CGIDTO> getSearchData(String keyword){
 		return db.selectCGIData(keyword);
 	}
-	
 	//종교로 검색
 	public ArrayList<CGIDTO> getDataReligion(String keyword) {
 		return db.selectCGIDataReligion(keyword);
@@ -65,6 +78,11 @@ public class Data {
 	//지역으로 검색
 	public ArrayList<CGIDTO> getDataLocation(String keyword){
 		return db.selectCGIDataLocation(keyword);
+	}
+	//모든 국가명 반환
+	public ArrayList<String> getAllCountryName(){
+		ArrayList<String> result = new ArrayList<>();
+		return result;
 	}
 }
 	
