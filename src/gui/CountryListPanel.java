@@ -1,5 +1,8 @@
 package gui;
 
-public class CountryListPanel extends BasicPanel {
+import javax.swing.DefaultListModel;
 
+public class CountryListPanel extends BasicPanel {
+	private DefaultListModel model;
+	
 }
