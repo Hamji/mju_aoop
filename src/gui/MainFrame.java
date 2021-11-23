@@ -1,5 +1,7 @@
 package gui;
 
+import data.Data;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
@@ -20,6 +22,7 @@ public class MainFrame extends JFrame {
 		
 	}
 	public MainFrame() {
+		Data data = new Data();
 		setTitle("FreshmanTravel");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -2,6 +2,8 @@ package data;
 
 import data.dto.*;
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,8 +17,7 @@ public class CSV {
 	}
 	
 	public void CGIDataToCSV(ArrayList<CGIDTO> list) throws IOException {
-		
-		FileWriter writer = new FileWriter("파일 저장 경로");
+		FileWriter writer = new FileWriter("./out/file.csv");
 		
 		int i = 0;
 		while(i < list.size()) {
@@ -44,13 +45,17 @@ public class CSV {
 	}
 	public ArrayList<CGIDTO> getCGIData() {
 		ArrayList<CGIDTO> csvList = new ArrayList<CGIDTO>();
-		String csvFilePath = "\resource";
+		Path path = Paths.get("");
+		String csvFilePath = path.toAbsolutePath().toString();
+		csvFilePath = csvFilePath + "/src/resource/file.csv";
 		File csv = new File(csvFilePath);
 		BufferedReader lineReader = null;
 		String lineText = null;		
 		
-		 try {			 	
-			 	lineReader = new BufferedReader(new FileReader(csv));
+		 try {
+
+			 System.out.println(csvFilePath);
+			 lineReader = new BufferedReader(new FileReader(csv));
 			 	
 
 			 	//속성 이름들을 제외한 데이터들을 가져오기 위해 한 줄을 먼저 읽는다. 
@@ -82,9 +87,12 @@ public class CSV {
 	    			Double sumRate = 0.0;
 	    			int gita = -1;
 
-	    			for(int i = 0; i < rgData.size(); i++) {	 			
-	    				sumRate = sumRate + Double.parseDouble(rgData.get(i).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""));
-	    				
+	    			for(int i = 0; i < rgData.size(); i++) {
+	    				Pattern pattern1 = Pattern.compile("[0-9]+(\\.?[0-9])");
+	    				Matcher matcher = pattern1.matcher(rgData.get(i));
+	    				if(matcher.find()) {
+							sumRate = sumRate + Double.parseDouble(matcher.group().toString());
+						}
 	    				if((rgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("기타")) {
 	    					// "기타" 항목의 인덕스를 구함
 	    					gita = i;
@@ -110,16 +118,26 @@ public class CSV {
 			    			} else {
 			    				Double toAdd = 100.0 - sumRate;
 			    				toAdd = Math.round(toAdd * 100) / 100.0;
-			    				rgData.set(gita ,"기타" + Double.toString(toAdd + Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+								Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+								Matcher matcher = pattern1.matcher(rgData.get(gita));
+								if(matcher.find()) {
+									rgData.set(gita,"기타" + matcher.group().toString() + "%");
+								}
+			    				//rgData.set(gita ,"기타" + Double.toString(toAdd + Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 			    			}
 		    			} else if(gita != -1 && sumRate >= 100.0) {
-		    				rgData.set(gita ,"기타" + Double.toString(Math.round(Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "")) * 100)/100.0) + "%");
+							Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+							Matcher matcher = pattern1.matcher(rgData.get(gita));
+							if(matcher.find()) {
+								rgData.set(gita,"기타" + Double.toString(Math.round((Double.parseDouble(matcher.group().toString()) * 100)/100.0))  + "%");
+							}
+		    				//rgData.set(gita ,"기타" + Double.toString(Math.round(Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "")) * 100)/100.0) + "%");
 		    			}
 	    			}
 
 	    			System.out.println(rgData);
 	    			String rg_name;
-	    			String rg_number;
+	    			String rg_number = "";
 	    			Double rg_rate;	
 
 	    			String[] rgArray = (String[]) rgData.toArray(new String[rgData.size()]);
@@ -129,8 +147,13 @@ public class CSV {
 	    				rg_name = rgArray[i].replaceAll("([0-9.]+[%]?)", "");
 	    				if(rg_name.contains("기타")) {
 	    					rg_name = "기타";
-	    				}	    				
-	    				rg_number = rgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
+	    				}
+						Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+						Matcher matcher = pattern1.matcher(rgData.get(i));
+						if(matcher.find()) {
+							rg_number = matcher.group().toString();
+						}
+	    				//rg_number = rgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
 	    				rg_rate = Double.parseDouble(rg_number);
 
 	    				filteredRg.setRData(rg_name, rg_rate);	    				
@@ -158,9 +181,14 @@ public class CSV {
 	    			Double sumRate1 = 0.0;
 	    			int gita1 = -1;
 
-	    			for(int i = 0; i < mgData.size(); i++) {	 			
+	    			for(int i = 0; i < mgData.size(); i++) {
 
-	    				sumRate1 = sumRate1 + Double.parseDouble(mgData.get(i).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""));
+						Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+						Matcher matcher = pattern1.matcher(mgData.get(i));
+						if(matcher.find()) {
+							sumRate1 = sumRate1 + Double.parseDouble(matcher.group().toString());
+						}
+	    				//sumRate1 = sumRate1 + Double.parseDouble(mgData.get(i).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""));
 
 	    				
 	    				if((mgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("기타")) {
@@ -187,16 +215,27 @@ public class CSV {
 			    			} else {
 			    				Double toAdd = 100.0 - sumRate1;
 			    				toAdd = Math.round(toAdd * 100) / 100.0;
-			    				mgData.set(gita1 ,"기타" + Double.toString(toAdd + Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+
+			    				Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+								Matcher matcher = pattern1.matcher(mgData.get(gita1));
+								if(matcher.find()) {
+									mgData.set(gita1,"기타" + Double.toString(toAdd + Double.parseDouble(matcher.group().toString())) + "%");
+								}
+			    				//mgData.set(gita1 ,"기타" + Double.toString(toAdd + Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 			    			}
 		    			} else if(gita1 != -1 && sumRate1 >= 100.0) {
-		    				mgData.set(gita1 ,"기타" + Double.toString(Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
+							Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+							Matcher matcher = pattern1.matcher(mgData.get(gita1));
+							if(matcher.find()) {
+								mgData.set(gita1,"기타" + matcher.group().toString() + "%");
+							}
+		    				//mgData.set(gita1 ,"기타" + Double.toString(Double.parseDouble(mgData.get(gita1).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 		    			}
 	    			}	    			
 
 	    			System.out.println(mgData);
 	    			String mg_name;
-	    			String mg_number;
+	    			String mg_number = "";
 	    			Double mg_rate;
 
 
@@ -206,8 +245,14 @@ public class CSV {
 	    				mg_name = mgArray[i].replaceAll("([0-9.]+[%]?)", "");
 	    				if(mg_name.contains("기타")) {
 	    					mg_name = "기타";
-	    				}	    	
-	    				mg_number = mgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
+	    				}
+
+	    				Pattern pattern1 = Pattern.compile("[0-9]+(\\.?[0-9])");
+						Matcher matcher = pattern1.matcher(mgData.get(i));
+						if(matcher.find()) {
+							mg_number = matcher.group().toString();
+						}
+	    				//mg_number = mgArray[i].replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", "");
 	    				mg_rate = Double.parseDouble(mg_number);
 
 	    				filteredMg.setMGData(mg_name, mg_rate);
