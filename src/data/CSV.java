@@ -51,6 +51,7 @@ public class CSV {
 		Path path = Paths.get("");
 		String csvFilePath = path.toAbsolutePath().toString();
 		csvFilePath = csvFilePath + "/src/resource/file.csv";
+
 		File csv = new File(csvFilePath);
 		BufferedReader lineReader = null;
 		String lineText = null;		
@@ -66,7 +67,7 @@ public class CSV {
 			 	
 	            while ((lineText = lineReader.readLine()) != null) {
 	            	//,로 각 속성을 구분할 때 ""안의 ,는 무시하여 구분한다.
-	              String[] data = lineText.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+	              String[] data = lineText.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)");
 
 	    			   //종교 처리
 	    			   String rg = data[6];
@@ -79,7 +80,7 @@ public class CSV {
 	    			rg = rg.replace("(", "");
 	    			rg = rg.replace(")", "");
 	    			//", "",""*" 등으로 각 종교를 구분하여 데이터를 분리하여 배열로 저장
-	    			Pattern pattern = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\\\d+%[가-힣A-Za-z]+");
+	    			Pattern pattern = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\d+%[가-힣A-Za-z]+");
 	    			Matcher m = pattern.matcher(rg);
 	    			List<String> rgData = new ArrayList<String>();
 	    			while(m.find()) {

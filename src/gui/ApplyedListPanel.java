@@ -3,6 +3,7 @@ package gui;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -35,6 +36,7 @@ public class ApplyedListPanel extends BasicPanel {
 
 	public void addFilter(String filter) {
 		if(!items.contains(filter)) items.add(list.getModel().getSize(), filter);
+		((MapPanel) PanelManager.getInstance().getPanel("MapPanel")).updateButtons(Arrays.copyOf(items.toArray(), items.size(), String[].class));
 	}
 
 	public void removeFilter() {
@@ -43,5 +45,13 @@ public class ApplyedListPanel extends BasicPanel {
 		for(int i = selectedIndices.length - 1; i >= 0; i--) {
 			items.remove(selectedIndices[i]);
 		}
+	}
+
+	public String[] getFilterList() {
+		return Arrays.copyOf(items.toArray(), items.size(), String[].class);
+	}
+
+	public void setFilterList(String[] filterList) {
+		for (String filter: filterList) addFilter(filter);
 	}
 }

@@ -155,8 +155,7 @@ public class Database {
             }
         }
 		
-	}
-	
+  }
 	//입력받은 문자열과 관련된 모든 CGI 데이터를 추출함
 	public ArrayList<CGIDTO> selectCGIData(String filter) {
 		ArrayList<CGIDTO> cgiList = new ArrayList<CGIDTO>();

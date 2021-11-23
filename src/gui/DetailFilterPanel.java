@@ -24,8 +24,10 @@ public class DetailFilterPanel extends BasicPanel {
             default: System.out.println("[DetailFilterPanel][drawButton] unExpected Categori: " + categori); return;
         }
         
-        // 버튼이 안지워진다...
-        for(JButton btn: jButtons) this.remove(btn);
+        for(JButton btn: jButtons) {
+            btn.setVisible(false);
+            this.remove(btn);
+        }
         for(String text: target) {
             JButton btn = new JButton(text);
             btn.setPreferredSize(new Dimension(200, 50));
@@ -35,7 +37,7 @@ public class DetailFilterPanel extends BasicPanel {
             jButtons.add(btn);
 
         }
-        revalidate();
+        //revalidate();
+        repaint();
     }
-
 }
