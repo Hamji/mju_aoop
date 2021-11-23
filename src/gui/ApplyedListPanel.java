@@ -46,4 +46,12 @@ public class ApplyedListPanel extends BasicPanel {
 			items.remove(selectedIndices[i]);
 		}
 	}
+
+	public String[] getFilterList() {
+		return Arrays.copyOf(items.toArray(), items.size(), String[].class);
+	}
+
+	public void setFilterList(String[] filterList) {
+		for (String filter: filterList) addFilter(filter);
+	}
 }

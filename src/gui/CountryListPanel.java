@@ -10,10 +10,15 @@ public class CountryListPanel extends BasicPanel {
 	private String[] dummyList = {"test", "test", "test", "test", "test", "test",
 			 "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"
 			 , "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"};
+	
 	public CountryListPanel() {
 		this.setLayout(new BorderLayout());
-		JList temp = new JList(this.dummyList);
+		JList temp = new JList();
 		this.add(new JScrollPane(temp), BorderLayout.CENTER);
 	}
-	
+	public CountryListPanel(String[] data) {
+		this.setLayout(new BorderLayout());
+		JList temp = new JList(data);
+		this.add(new JScrollPane(temp), BorderLayout.CENTER);
+	}
 }

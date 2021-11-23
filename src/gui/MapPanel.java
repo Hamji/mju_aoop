@@ -19,7 +19,7 @@ public class MapPanel extends BasicPanel {
 	public MapPanel(Image img) {
 	      this.img = img;
 	      this.setLayout(new BorderLayout(5,5));
-	      setSize(new Dimension(img.getWidth(null), img.getHeight(null)));
+	      setSize(new Dimension(img.getWidth(null) , img.getHeight(null)));
 	      setPreferredSize(new Dimension(img.getWidth(null), img.getHeight(null)));
 	      setLayout(null);
 
@@ -37,7 +37,7 @@ public class MapPanel extends BasicPanel {
 		continents[COUNTRY.AMERICA.ordinal()].setBounds(200, 200, 100, 100);
 		continents[COUNTRY.SOUTH.ordinal()].setBounds(270, 480, 100, 100);
 		continents[COUNTRY.EUROPE.ordinal()].setBounds(500, 150, 100, 100);
-	    g.drawImage(img, 0, 0, 860, 500, null);
+	    g.drawImage(img, 0, 0, 1000, 700, null);
 	}
 
 	public void updateButtons(String[] filters) {

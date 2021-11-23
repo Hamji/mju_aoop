@@ -19,7 +19,7 @@ public class Database {
 	//데이터베이스 Connection
 	private Connection con;
 	//DB설정파일
-	private static final String RESOURCE = "src/resource/db.properties";
+	private static final String RESOURCE = "src/resource/db-real.properties";
 	//DB설정값
 	private String DB_DRIVER_CLASS = null;
 	private String DB_URL = null;
@@ -70,32 +70,32 @@ public class Database {
 
 	//CSV파일의 데이터를 DB에 저장
 	public void insertCGIData(ArrayList<CGIDTO> dtoList){
-		//테이블이 없을경우 생성
-		try {
-			String cTableSQL = "CREATE TABLE IF NOT EXISTS 'cgi' "
-					+ "'country' varchar(50) NOT NULL,"
-					+ "'country_code' varchar(2) DEFAULT NULL,"
-					+ "'capital' varchar(100) DEFAULT NULL,"
-					+ "'climate' varchar(200) DEFAULT NULL,"
-					+ "'locattion' varchar(200) DEFAULT NULL,"
-					+ "'major_city` varchar(200) DEFAULT NULL,"
-					+ "'religion` text,"
-					+ "'major_group` text,"
-					+ "'media` text,"
-					+ "'area` double DEFAULT NULL,"
-					+ "'area_source` varchar(100) DEFAULT NULL,"
-					+ "'area_desc` varchar(100) DEFAULT NULL,"
-					+ "'language` text,"
-					+ "'year` int DEFAULT NULL,"
-					+ "PRIMARY KEY (`country`)"
-					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci";
-			connectDB();
-			PreparedStatement pst = con.prepareStatement(cTableSQL);
-			pst.execute();
-			con.close();
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}
+//		//테이블이 없을경우 생성
+//		try {
+//			String cTableSQL = "CREATE TABLE IF NOT EXISTS 'cgi' "
+//					+ "'country' varchar(50) NOT NULL,"
+//					+ "'country_code' varchar(2) DEFAULT NULL,"
+//					+ "'capital' varchar(100) DEFAULT NULL,"
+//					+ "'climate' varchar(200) DEFAULT NULL,"
+//					+ "'locattion' varchar(200) DEFAULT NULL,"
+//					+ "'major_city` varchar(200) DEFAULT NULL,"
+//					+ "'religion` text,"
+//					+ "'major_group` text,"
+//					+ "'media` text,"
+//					+ "'area` double DEFAULT NULL,"
+//					+ "'area_source` varchar(100) DEFAULT NULL,"
+//					+ "'area_desc` varchar(100) DEFAULT NULL,"
+//					+ "'language` text,"
+//					+ "'year` int DEFAULT NULL,"
+//					+ "PRIMARY KEY (`country`)"
+//					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci";
+//			connectDB();
+//			PreparedStatement pst = con.prepareStatement(cTableSQL);
+//			pst.execute();
+//			con.close();
+//		}catch(SQLException e) {
+//			e.printStackTrace();
+//		}
 		//데이터삽입
 		try {
 			//DB Connection, config
