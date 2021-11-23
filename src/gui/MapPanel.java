@@ -1,5 +1,8 @@
 package gui;
 
+import data.Data;
+import data.dto.CGIDTO;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -43,6 +46,13 @@ public class MapPanel extends BasicPanel {
 	public void updateButtons(String[] filters) {
 		// 필터들에 따라서 button update
 		System.out.println(Arrays.toString(filters));
+		ArrayList<CGIDTO> cgidtos = new Data().getFilteredData(filters);
+		System.out.println("PRINTING!!!!");
+		System.out.println(cgidtos);
+
+		for(CGIDTO cgidto: cgidtos) {
+			System.out.println(cgidto.getCountry());
+		}
 	}
 
 	private String[] getCountries() {

@@ -19,7 +19,7 @@ public class CSV {
 		dir = null;
 	}
 	
-	public void CGIDataToCSV(ArrayList<CGIDTO> list) throws IOException {
+	public static void CGIDataToCSV(ArrayList<CGIDTO> list) throws IOException {
 		FileWriter writer = new FileWriter("./out/file.csv");
 		
 		int i = 0;
@@ -58,7 +58,7 @@ public class CSV {
 		
 		 try {
 
-			 System.out.println(csvFilePath);
+			 // System.out.println(csvFilePath);
 			 lineReader = new BufferedReader(new FileReader(csv));
 			 	
 
@@ -139,7 +139,7 @@ public class CSV {
 		    			}
 	    			}
 
-	    			System.out.println(rgData);
+	    			// System.out.println(rgData);
 	    			String rg_name;
 	    			String rg_number = "";
 	    			Double rg_rate;	
@@ -147,7 +147,7 @@ public class CSV {
 	    			String[] rgArray = (String[]) rgData.toArray(new String[rgData.size()]);
 
 	    			for(int i = 0; i< rgArray.length; i++) {
-	    				System.out.println(rgArray[i]);
+	    				// System.out.println(rgArray[i]);
 	    				rg_name = rgArray[i].replaceAll("([0-9.]+[%]?)", "");
 	    				if(rg_name.contains("기타")) {
 	    					rg_name = "기타";
@@ -239,7 +239,7 @@ public class CSV {
 		    			}
 	    			}	    			
 
-	    			System.out.println(mgData);
+	    			//System.out.println(mgData);
 	    			String mg_name;
 	    			String mg_number = "";
 	    			Double mg_rate;

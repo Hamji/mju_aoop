@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.JButton;
 
 public class FilterPanel extends BasicPanel {
-//	final private String[] categori = {"지역", "날씨", "문화", "종교", "코로나"};
 	final private String[] categori = {"지역", "날씨", "종교"};
 
 	

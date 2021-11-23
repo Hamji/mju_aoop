@@ -9,8 +9,9 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 
 public class CountryListPanel extends BasicPanel {
-
+   private String[] countries;
    public CountryListPanel(String[] data) {
+      countries = data;
       this.setLayout(new BorderLayout());
       JList temp = new JList(data);
       temp.addMouseListener(new MouseAdapter() {
@@ -21,5 +22,9 @@ public class CountryListPanel extends BasicPanel {
          }
       });
       this.add(new JScrollPane(temp), BorderLayout.CENTER);
+   }
+
+   public String[] getCountries() {
+      return countries;
    }
 }

@@ -19,7 +19,7 @@ public class Database {
 	//데이터베이스 Connection
 	private Connection con;
 	//DB설정파일
-	private static final String RESOURCE = "src/resource/db-real.properties";
+	private static final String RESOURCE = "src/resource/db.properties";
 	//DB설정값
 	private String DB_DRIVER_CLASS = null;
 	private String DB_URL = null;
@@ -165,7 +165,8 @@ public class Database {
 			//입력받은 문자열로 시작하는 문자열을 각 국가의 이름, 국가코드, 수도, 주요도시와 비교하고 같으면 select하는 sql문
 			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
             PreparedStatement pst = con.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();            
+            ResultSet rs = pst.executeQuery();
+
             while(rs.next()) {            	
             	CGIDTO dto = new CGIDTO.Builder()
             			.setCountry(rs.getString(1))
