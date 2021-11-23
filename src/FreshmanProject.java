@@ -1,5 +1,7 @@
 import java.awt.EventQueue;
 
+import data.Data;
+import data.Database;
 import gui.MainFrame;
 
 public class FreshmanProject {
@@ -7,7 +9,7 @@ public class FreshmanProject {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
-			
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

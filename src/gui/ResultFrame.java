@@ -20,7 +20,7 @@ public class ResultFrame extends JDialog {
 
 		// TODO country가 실제로 있는 country인지 확인해야함
 		this.countryInfoPanel = new CountryInfoPanel();
-		this.countryListPanel = new CountryListPanel();
+		this.countryListPanel = new CountryListPanel(countries);
 		this.resultMenuBarPanel = new ResultMenuBarPanel();
 
 		PanelManager.getInstance().addPanel(countryInfoPanel);
