@@ -4,12 +4,10 @@ public class CountryData {
 	private String name;
 	private String inform;
 	
-	public CountryData() {
-		this.name = new String();
-		this.inform = new String();
+	public CountryData(String country) {
+		this.name = country;
+		this.inform = new String(); // n
 	}
-	
-	
 	
 	public String getName() {
 		return name;

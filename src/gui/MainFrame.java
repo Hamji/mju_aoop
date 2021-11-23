@@ -1,5 +1,8 @@
 package gui;
 
+import data.Data;
+import data.Database;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
@@ -24,6 +27,7 @@ public class MainFrame extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1280, 800);
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		contentPane.setLayout(new BorderLayout(5, 5));
@@ -34,5 +38,7 @@ public class MainFrame extends JFrame {
 		
 		this.contentPane.add(this.informPanel, BorderLayout.WEST);
 		this.contentPane.add(this.overviewPanel, BorderLayout.CENTER);
+
+//		Data data = new Data();
 	}	
 }

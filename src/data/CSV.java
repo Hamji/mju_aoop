@@ -44,7 +44,7 @@ public class CSV {
 	}
 	public ArrayList<CGIDTO> getCGIData() {
 		ArrayList<CGIDTO> csvList = new ArrayList<CGIDTO>();
-		String csvFilePath = "\resource";
+		String csvFilePath = "src\\resource\\file.csv";
 		File csv = new File(csvFilePath);
 		BufferedReader lineReader = null;
 		String lineText = null;		
