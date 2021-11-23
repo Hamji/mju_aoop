@@ -1,10 +1,13 @@
 package data;
 
 import data.dto.*;
+
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -168,6 +171,8 @@ public class CSV {
 	    			mg = mg.replace(" ", "");
 	    			mg = mg.replace("(", "");
 	    			mg = mg.replace(")", "");
+	    			mg = mg.replace("‘","");
+	    			mg = mg.replace("＇","");
 	    			
 	    			//", "",""*" 등으로 각 종교를 구분하여 데이터를 분리하여 배열로 저장
 	    			Pattern pattern2 = Pattern.compile("[가-힣A-Za-z]+\\d+[.]\\d+%|[가-힣A-Za-z]+\\d+%|[가-힣A-Za-z]+\\d+[-]\\d+%|[가-힣A-Za-z]+\\d+%[가-힣A-Za-z]+");
@@ -182,8 +187,11 @@ public class CSV {
 	    			int gita1 = -1;
 
 	    			for(int i = 0; i < mgData.size(); i++) {
+						if(csvList.size() == 154){
+							System.out.println("");
+						}
 
-						Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+						Pattern pattern1 = Pattern.compile("[0-9]+(\\.?[0-9])");
 						Matcher matcher = pattern1.matcher(mgData.get(i));
 						if(matcher.find()) {
 							sumRate1 = sumRate1 + Double.parseDouble(matcher.group().toString());
@@ -194,6 +202,7 @@ public class CSV {
 	    				if((mgData.get(i).replaceAll("([0-9.]+[%]?)", "")).contains("기타")) {
 	    					gita1 = i;
 	    				}
+
 	    				//주요민족 비율 범위 처리
 	    				if(mgData.get(i).contains("-")) {
 	    					int index = mgData.get(i).indexOf("-");
@@ -258,9 +267,8 @@ public class CSV {
 	    				filteredMg.setMGData(mg_name, mg_rate);
 	    			}
 
-	    			
 	    			//면적이 없는 나라에 대한 처리
-	    			if(data[9] == "") {
+	    			if(data[9].equals("")) {
 	    				data[9] = "0.0";
 	    			}	    			    			
 	    			//Builder 처리
