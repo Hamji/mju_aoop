@@ -2,13 +2,17 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.ByteOrder;
 
 import javax.swing.JButton;
@@ -17,6 +21,33 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import data.CountryData;
+import data.Data;
+import data.dto.CGIDTO;
+
+class URIListener implements ActionListener{
+	private String data;
+	private String url = "https://www.tripadvisor.co.kr/Search?q=";
+	
+	public URIListener(String data) {
+		this.data = data;
+	}
+	@Override
+    public void actionPerformed(ActionEvent e) {
+		Desktop desktop = Desktop.getDesktop();
+		try {
+			String subURL = "도쿄";
+			if (data.equals("Empty Name"));
+				subURL = "";
+			subURL = URLEncoder.encode(subURL, "UTF-8");
+            URI uri = new URI(url + subURL);
+            desktop.browse(uri);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (URISyntaxException ex) {
+            ex.printStackTrace();
+        }
+    }
+}
 
 public class CountryInfoPanel extends BasicPanel {
    private JLabel name;
@@ -58,7 +89,7 @@ public class CountryInfoPanel extends BasicPanel {
       this.setLayout(new BorderLayout());
       
       this.urlButton = new JButton("더 많은 정보");
-      
+      this.urlButton.addActionListener(new URIListener(this.name.getText()));
       
       this.infoPanel = new JPanel();
       this.infoPanel.setLayout(new GridLayout(2,1));
@@ -72,6 +103,10 @@ public class CountryInfoPanel extends BasicPanel {
    }
 
    public void drawInfo(String country) {
-      System.out.println(country);
+      //System.out.println(country);
+	  Data d = new Data();
+	  CGIDTO temp;
+	  
+	  
    }
 }
