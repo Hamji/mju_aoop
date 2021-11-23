@@ -24,23 +24,10 @@ public class Data {
 		result = db.selectCGIData(filter);
 		return result.size();
 	}
-	
-	//이거 굳이 이렇게까지 해야하나요?
-	//입력받은 문자열과 관련된 국가들 중 선택한 국가의 정보를 리턴하는 함수
-	public CGIDTO getCountryData(String filter, String selected){
-		CGIDTO resultDTO = new CGIDTO();
-		
-		try {	
-			
-			for(int i = 0; i < getCountryCount(filter); i++) {
-				if(db.selectCGIData(filter).get(i).getCountry() == selected) {
-					resultDTO = db.selectCGIData(filter).get(i);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		};
-		return resultDTO;
+
+	//국가명을 받으면 국가정보를 반환하는 메서드
+	public CGIDTO getCountryData(String filter){
+		return db.selectCGIDataName(filter).get(0);
 	}
 	
 	//필터의 키워드들을 모두 검색하여 검색된 결과목록을 보내는 메서드
