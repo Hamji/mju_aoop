@@ -70,39 +70,58 @@ public class Database {
 
 	//CSV파일의 데이터를 DB에 저장
 	public void insertCGIData(ArrayList<CGIDTO> dtoList){
-//		//테이블이 없을경우 생성
-//		try {
-//			String cTableSQL = "CREATE TABLE IF NOT EXISTS 'cgi' "
-//					+ "'country' varchar(50) NOT NULL,"
-//					+ "'country_code' varchar(2) DEFAULT NULL,"
-//					+ "'capital' varchar(100) DEFAULT NULL,"
-//					+ "'climate' varchar(200) DEFAULT NULL,"
-//					+ "'locattion' varchar(200) DEFAULT NULL,"
-//					+ "'major_city` varchar(200) DEFAULT NULL,"
-//					+ "'religion` text,"
-//					+ "'major_group` text,"
-//					+ "'media` text,"
-//					+ "'area` double DEFAULT NULL,"
-//					+ "'area_source` varchar(100) DEFAULT NULL,"
-//					+ "'area_desc` varchar(100) DEFAULT NULL,"
-//					+ "'language` text,"
-//					+ "'year` int DEFAULT NULL,"
-//					+ "PRIMARY KEY (`country`)"
-//					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci";
-//			connectDB();
-//			PreparedStatement pst = con.prepareStatement(cTableSQL);
-//			pst.execute();
-//			con.close();
-//		}catch(SQLException e) {
-//			e.printStackTrace();
-//		}
-		//데이터삽입
+		/*
+		//테이블이 없을경우 생성
+		try {
+			String cTableSQL = "CREATE TABLE IF NOT EXISTS 'cgi' "
+					+ "'country' varchar(50) NOT NULL,"
+					+ "'country_code' varchar(2) DEFAULT NULL,"
+					+ "'capital' varchar(100) DEFAULT NULL,"
+					+ "'climate' varchar(200) DEFAULT NULL,"
+					+ "'location' varchar(200) DEFAULT NULL,"
+					+ "'major_city' varchar(200) DEFAULT NULL,"
+					+ "'religion' text,"
+					+ "'major_group' text,"
+					+ "'media' text,"
+					+ "'area' double DEFAULT NULL,"
+					+ "'area_source' varchar(100) DEFAULT NULL,"
+					+ "'area_desc' varchar(100) DEFAULT NULL,"
+					+ "'language' text,"
+					+ "'year' int DEFAULT NULL,"
+					+ "PRIMARY KEY ('country')"
+					+ ");";
+			connectDB();
+			PreparedStatement pst = con.prepareStatement(cTableSQL);
+			pst.execute();
+			con.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		 */
+		//이미 데이터가 들어가있으면 데이터를 삽입하지 않고 프로그램실행
+		try{
+			connectDB();
+			String sql = "Select count(country) FROM cgi";
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()){
+				//삽입 쿼리가 한개라도 오류가 나면 commit되지 않아 한개라도 들어갔다면 모든 데이터가 들어간것으로 간주
+				if(rs.getInt(1) != 0){
+					con.close();
+					return;
+				}
+			}
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+
+		//데이터가 삽입되지 않았다면 데이터 삽입
 		try {
 			//DB Connection, config
 			connectDB();
             con.setAutoCommit(false);
 			//Set SQL
-            String sql = "INSERT INTO cgi (country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO cgi (country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pst = con.prepareStatement(sql);
             //Make Query
             for(CGIDTO dto: dtoList) {
@@ -136,8 +155,7 @@ public class Database {
             }
         }
 		
-	}
-	
+  }
 	//입력받은 문자열과 관련된 모든 CGI 데이터를 추출함
 	public ArrayList<CGIDTO> selectCGIData(String filter) {
 		ArrayList<CGIDTO> cgiList = new ArrayList<CGIDTO>();
@@ -145,7 +163,7 @@ public class Database {
 			//DB연결
 			connectDB();
 			//입력받은 문자열로 시작하는 문자열을 각 국가의 이름, 국가코드, 수도, 주요도시와 비교하고 같으면 select하는 sql문
-			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
             PreparedStatement pst = con.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();            
             while(rs.next()) {            	
@@ -182,7 +200,7 @@ public class Database {
 			//DB연결
 			connectDB();
 			//sql Query set
-			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //executeQuery
@@ -220,7 +238,7 @@ public class Database {
 		try {
 			connectDB();
 			//sqlQuery set
-			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE location LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE location LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
@@ -259,7 +277,7 @@ public class Database {
 		try {
 			connectDB();
 			//sql Query Set
-			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE weather LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE weather LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
@@ -297,7 +315,7 @@ public class Database {
 		try {
 			connectDB();
 			//sql Query Set
-			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_groups, media, area, area_source, area_desc, language, year FROM cgi WHERE religion LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE religion LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
