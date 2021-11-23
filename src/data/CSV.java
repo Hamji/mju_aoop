@@ -151,7 +151,7 @@ public class CSV {
 	    				if(rg_name.contains("기타")) {
 	    					rg_name = "기타";
 	    				}
-						Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
+						Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])?");
 						Matcher matcher = pattern1.matcher(rgData.get(i));
 						if(matcher.find()) {
 							rg_number = matcher.group().toString();
@@ -243,7 +243,6 @@ public class CSV {
 	    			String mg_number = "";
 	    			Double mg_rate;
 
-
 	    			String[] mgArray = (String[]) mgData.toArray(new String[mgData.size()]);
 
 	    			for(int i = 0; i< mgArray.length; i++) {	
@@ -252,7 +251,7 @@ public class CSV {
 	    					mg_name = "기타";
 	    				}
 
-	    				Pattern pattern1 = Pattern.compile("[0-9]+(\\.?[0-9])");
+	    				Pattern pattern1 = Pattern.compile("[0-9]+(\\.?[0-9])?");
 						Matcher matcher = pattern1.matcher(mgData.get(i));
 						if(matcher.find()) {
 							mg_number = matcher.group().toString();
