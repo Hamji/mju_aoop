@@ -81,8 +81,7 @@ public class Data {
 	}
 	//모든 국가명 반환
 	public ArrayList<String> getAllCountryName(){
-		ArrayList<String> result = new ArrayList<>();
-		return result;
+		return db.selectAllCountryName();
 	}
 }
 	

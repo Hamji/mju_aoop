@@ -329,6 +329,24 @@ public class Database {
         }
 		return cgiList;
 	}
+	//이름전체 반환
+	public ArrayList<String> selectAllCountryName(){
+		ArrayList<String> result = null;
+		try {
+			connectDB();
+			String sql = "SELECT country FROM cgi";
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			result = new ArrayList<>();
+			while(rs.next()) {
+				result.add(rs.getString("country"));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			return result;
+	}
 	
 	//String Data 객체로 변환
 	private Religion transRData(String data) {
