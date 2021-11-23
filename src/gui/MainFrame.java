@@ -39,6 +39,6 @@ public class MainFrame extends JFrame {
 		this.contentPane.add(this.informPanel, BorderLayout.WEST);
 		this.contentPane.add(this.overviewPanel, BorderLayout.CENTER);
 
-//		Data data = new Data();
+		Data data = new Data();
 	}	
 }

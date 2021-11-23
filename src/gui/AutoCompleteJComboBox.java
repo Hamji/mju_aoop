@@ -52,7 +52,7 @@ public class AutoCompleteJComboBox extends JComboBox {
                 System.out.println(e.getKeyChar());
                 if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     autoCompleteDocument.autoComplete();
-                    new ResultFrame(filteredCountry);
+                    new ResultFrame(new String[]{filteredCountry});
                 }
                 setPopupVisible(true);
             }

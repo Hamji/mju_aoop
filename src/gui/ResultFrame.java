@@ -10,7 +10,7 @@ public class ResultFrame extends JDialog {
 	private CountryListPanel countryListPanel;
 	private CountryInfoPanel countryInfoPanel;
 	
-	public ResultFrame(String country) {
+	public ResultFrame(String[] countries) {
 		this.setBounds(500, 200, 800, 500);
 		this.setSize(800, 500);
 		this.setResizable(false);
@@ -19,7 +19,7 @@ public class ResultFrame extends JDialog {
 
 		// TODO country가 실제로 있는 country인지 확인해야함
 
-		this.countryInfoPanel = new CountryInfoPanel(new CountryData(country));
+		this.countryInfoPanel = new CountryInfoPanel();
 		this.countryListPanel = new CountryListPanel();
 
 		this.add(countryListPanel);
