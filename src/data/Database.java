@@ -98,7 +98,24 @@ public class Database {
 			e.printStackTrace();
 		}
 		 */
-		//데이터삽입
+		//이미 데이터가 들어가있으면 데이터를 삽입하지 않고 프로그램실행
+		try{
+			connectDB();
+			String sql = "Select count(country) FROM cgi";
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()){
+				//삽입 쿼리가 한개라도 오류가 나면 commit되지 않아 한개라도 들어갔다면 모든 데이터가 들어간것으로 간주
+				if(rs.getInt(1) != 0){
+					con.close();
+					return;
+				}
+			}
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+
+		//데이터가 삽입되지 않았다면 데이터 삽입
 		try {
 			//DB Connection, config
 			connectDB();

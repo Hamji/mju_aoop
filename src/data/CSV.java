@@ -187,10 +187,6 @@ public class CSV {
 	    			int gita1 = -1;
 
 	    			for(int i = 0; i < mgData.size(); i++) {
-						if(csvList.size() == 154){
-							System.out.println("");
-						}
-
 						Pattern pattern1 = Pattern.compile("[0-9]+(\\.?[0-9])");
 						Matcher matcher = pattern1.matcher(mgData.get(i));
 						if(matcher.find()) {
