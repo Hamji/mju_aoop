@@ -19,6 +19,7 @@ public class CSV {
 		dir = null;
 	}
 
+
 	public void CGIDataToCSV(ArrayList<CGIDTO> list) throws IOException {
 		FileWriter writer = new FileWriter("./out/file.csv");
 
@@ -53,6 +54,7 @@ public class CSV {
 		csvFilePath = csvFilePath + "/src/resource/file.csv";
 		File csv = new File(csvFilePath);
 		BufferedReader lineReader = null;
+
 		String lineText = null;
 
 		try {
@@ -121,12 +123,12 @@ public class CSV {
 						} else {
 							Double toAdd = 100.0 - sumRate;
 							toAdd = Math.round(toAdd * 100) / 100.0;
+
 							Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
 							Matcher matcher = pattern1.matcher(rgData.get(gita));
 							if(matcher.find()) {
 								rgData.set(gita,"기타" + matcher.group().toString() + "%");
 							}
-							//rgData.set(gita ,"기타" + Double.toString(toAdd + Double.parseDouble(rgData.get(gita).replaceAll("[^[0-9]{1,2}.?[0-9]?]|[0-9]+-|[0-9]+/[0-9]+", ""))) + "%");
 						}
 					} else if(gita != -1 && sumRate >= 100.0) {
 						Pattern pattern1 = Pattern.compile("[0-9]+(.?[0-9])");
@@ -238,10 +240,12 @@ public class CSV {
 					}
 				}
 
+
 				System.out.println(mgData);
 				String mg_name;
 				String mg_number = "";
 				Double mg_rate;
+
 
 				String[] mgArray = (String[]) mgData.toArray(new String[mgData.size()]);
 
