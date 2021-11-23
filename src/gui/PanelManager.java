@@ -30,4 +30,5 @@ public class PanelManager {
     public BasicPanel getPanel(String panel) {
         return panels.get(panel);
     }
+
 }

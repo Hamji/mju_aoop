@@ -69,4 +69,8 @@ public class CountryInfoPanel extends BasicPanel {
 		this.add(this.infoPanel, BorderLayout.CENTER);
 		this.add(urlButton, BorderLayout.SOUTH);
 	}
+	
+	public void drawInfo(String name) {
+		
+	}
 }
