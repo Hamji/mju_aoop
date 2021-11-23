@@ -93,6 +93,17 @@ public class CGIDTO {
 		return this.year;
 	}
 	
+	//Hashset사용을 위한 메서드
+	public int hashCode() {return country.hashCode();}
+	public boolean equals(Object obj) {
+		if(obj instanceof CGIDTO) {
+			CGIDTO tmp = (CGIDTO)obj;
+			return country.equals(tmp.getCountry());
+		} else {
+			return false;
+		}
+	}
+	
 	//내부클래스 Builder
 	public static class Builder {
 		//Builder를 통해 받아올 자료

@@ -21,10 +21,10 @@ public class Database {
 	//DB설정파일
 	private static final String RESOURCE = "src/resource/db.properties";
 	//DB설정값
-	private String DB_DRIVER_CLASS;
-	private String DB_URL;
-	private String DB_USERNAME;
-	private String DB_PASSWORD;
+	private String DB_DRIVER_CLASS = null;
+	private String DB_URL = null;
+	private String DB_USERNAME = null;
+	private String DB_PASSWORD = null;
 
 	//생성자
 	public Database() {
@@ -33,16 +33,27 @@ public class Database {
 	
 	//DB연결
 	public boolean connectDB() {
-		Properties properties = new Properties();
+		//최초 접속시 DB설정값 읽어오기
+		if(DB_DRIVER_CLASS == null || DB_URL == null || DB_USERNAME == null || DB_PASSWORD == null) {
+			Properties properties = new Properties();
+			try {
+				//DB설정파일 읽기, FileNotFoundException
+				FileReader resources = new FileReader(RESOURCE);
+				//DB설정파일 불러오기, IOException
+				properties.load(resources);
+				DB_DRIVER_CLASS = properties.getProperty("driver").toString();
+				DB_URL = properties.getProperty("url").toString();
+				DB_USERNAME = properties.getProperty("username");
+				DB_PASSWORD = properties.getProperty("password");
+			} catch(FileNotFoundException e) {
+				e.printStackTrace();
+				return false;
+			} catch(IOException e){
+				e.printStackTrace();
+				return false;
+			}
+		}
 		try {
-			//DB설정파일 읽기, FileNotFoundException
-			FileReader resources = new FileReader(RESOURCE);
-			//DB설정파일 불러오기, IOException
-			properties.load(resources);
-			DB_DRIVER_CLASS = properties.getProperty("driver").toString();
-			DB_URL = properties.getProperty("url").toString();
-			DB_USERNAME = properties.getProperty("username");
-			DB_PASSWORD = properties.getProperty("password");
 			//DB드라이버가져오기, ClassNotFoundException, SQLException
 			Class.forName(DB_DRIVER_CLASS);
 			con = DriverManager.getConnection(DB_URL,DB_USERNAME,DB_PASSWORD);
@@ -53,11 +64,7 @@ public class Database {
 		} catch(SQLException e) {
 			e.printStackTrace();
 			return false;
-		} catch(FileNotFoundException e) {
-			e.printStackTrace();
-		} catch(IOException e){
-			e.printStackTrace();
-		}
+		} 
 		return true;
 	}
 
@@ -321,6 +328,24 @@ public class Database {
             e.printStackTrace();
         }
 		return cgiList;
+	}
+	//이름전체 반환
+	public ArrayList<String> selectAllCountryName(){
+		ArrayList<String> result = null;
+		try {
+			connectDB();
+			String sql = "SELECT country FROM cgi";
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			result = new ArrayList<>();
+			while(rs.next()) {
+				result.add(rs.getString("country"));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			return result;
 	}
 	
 	//String Data 객체로 변환
