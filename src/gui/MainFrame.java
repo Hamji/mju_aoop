@@ -22,6 +22,7 @@ public class MainFrame extends JFrame {
 		
 	}
 	public MainFrame() {
+		Data data = new Data();
 		setTitle("FreshmanTravel");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
