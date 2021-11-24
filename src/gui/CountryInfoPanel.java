@@ -29,14 +29,15 @@ class URIListener implements ActionListener{
 	private String url = "https://www.tripadvisor.co.kr/Search?q=";
 	
 	public URIListener(String data) {
-		this.data = data;
+		this.data = new String(data);
 	}
 	@Override
     public void actionPerformed(ActionEvent e) {
 		Desktop desktop = Desktop.getDesktop();
 		try {
-			String subURL = "도쿄";
-			if (data.equals("Empty Name"));
+			System.out.println(data);
+			String subURL = this.data;
+			if (data.equals("Empty Name"))
 				subURL = "";
 			subURL = URLEncoder.encode(subURL, "UTF-8");
             URI uri = new URI(url + subURL);
@@ -106,7 +107,12 @@ public class CountryInfoPanel extends BasicPanel {
       //System.out.println(country);
 	  Data d = new Data();
 	  CGIDTO temp;
-	  
-	  
+	  this.name.setText(country);
+	  this.remove(urlButton);
+	  this.urlButton = null;
+	  this.urlButton = new JButton("더 많은 정보");
+	  URIListener ul = new URIListener(this.name.getText());
+	  this.urlButton.addActionListener(ul);
+	  this.add(urlButton, BorderLayout.SOUTH);
    }
 }
