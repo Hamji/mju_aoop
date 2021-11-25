@@ -7,14 +7,25 @@ import data.dto.CGIDTO;
 
 public class Data {
 	//DB에 접근을 위한 DB객체, CSV읽기, 쓰기를 위한 CSV객체
-	private Database db;
-	private CSV csv;
-	
-	public Data() {
+	private static Data data = null;
+	private static Database db = null;
+	private static CSV csv = null;
+
+	private Data() {
 		db = new Database();
-		csv = new CSV();
-		//CSV파일을 읽어 DB에 삽입
+		csv = CSV.getInstance();
 		db.insertCGIData(csv.getCGIData());
+	}
+	public static Data getInstance() {
+		if(data == null) {
+			data = new Data();
+			db = new Database();
+
+			//CSV파일을 읽어 DB에 삽입
+			db.insertCGIData(CSV.getInstance().getCGIData());
+		}
+
+		return data;
 	}
 	
 	//데이터를 가져오기 위한 메서드들

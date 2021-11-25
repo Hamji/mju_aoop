@@ -39,7 +39,7 @@ public class AutoCompleteJComboBox extends JComboBox {
     }
 
     public AutoCompleteJComboBox() {
-        countries = new Data().getAllCountryName().toArray(new String[0]);
+        countries = Data.getInstance().getAllCountryName().toArray(new String[0]);
         for(String country: countries) addItem(country);
 
         setEditable(true);

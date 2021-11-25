@@ -22,7 +22,7 @@ public class MainFrame extends JFrame {
 		
 	}
 	public MainFrame() {
-		Data data = new Data();
+		Data data = Data.getInstance();
 		setTitle("FreshmanTravel");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

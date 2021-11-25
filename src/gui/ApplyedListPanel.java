@@ -35,7 +35,8 @@ public class ApplyedListPanel extends BasicPanel {
 	}
 
 	public void addFilter(String filter) {
-		if(!items.contains(filter)) items.add(list.getModel().getSize(), filter);
+		if(items.contains(filter)) return;
+		items.add(list.getModel().getSize(), filter);
 		((MapPanel) PanelManager.getInstance().getPanel("MapPanel")).updateButtons(Arrays.copyOf(items.toArray(), items.size(), String[].class));
 	}
 

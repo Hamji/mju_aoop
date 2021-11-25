@@ -40,4 +40,16 @@ public class DetailFilterPanel extends BasicPanel {
         //revalidate();
         repaint();
     }
+
+    public String[] getFaith() {
+        return faith;
+    }
+
+    public String[] getRegion() {
+        return region;
+    }
+
+    public String[] getWeather() {
+        return weather;
+    }
 }

@@ -163,7 +163,9 @@ public class Database {
 			//DB연결
 			connectDB();
 			//입력받은 문자열로 시작하는 문자열을 각 국가의 이름, 국가코드, 수도, 주요도시와 비교하고 같으면 select하는 sql문
-			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE country LIKE '" + filter + "%' OR country_code LIKE '" + filter + "%' OR capital LIKE '" + filter + "%' OR major_city LIKE '" + filter + "%'";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year " +
+						 "FROM cgi " +
+					     "WHERE country LIKE '%" + filter + "%' OR country_code LIKE '%" + filter + "%' OR capital LIKE '%" + filter + "%' OR major_city LIKE '%" + filter + "%'" ;
             PreparedStatement pst = con.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
 
@@ -206,6 +208,7 @@ public class Database {
             pst.setString(1, "%"+keyword+"%");
             //executeQuery
             ResultSet rs = pst.executeQuery();
+
             //객체 리스트로 저장
             while(rs.next()) {            	
             	CGIDTO dto = new CGIDTO.Builder()
@@ -278,7 +281,7 @@ public class Database {
 		try {
 			connectDB();
 			//sql Query Set
-			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE weather LIKE ?";
+			String sql = "SELECT country, country_code, capital, climate, location, major_city, religion, major_group, media, area, area_source, area_desc, language, year FROM cgi WHERE climate LIKE ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
@@ -320,7 +323,7 @@ public class Database {
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, "%"+keyword+"%");
             //execute Query
-            ResultSet rs = pst.executeQuery();            
+            ResultSet rs = pst.executeQuery();
             //객체리스트로 변환
             while(rs.next()) {            	
             	CGIDTO dto = new CGIDTO.Builder()
@@ -369,6 +372,7 @@ public class Database {
 	
 	//String Data 객체로 변환
 	private Religion transRData(String data) {
+		if (data.length() == 0) return new Religion();
 		Religion result = new Religion();
 		String[] tmp = data.split(",");
 		for(String s : tmp) {
@@ -377,6 +381,7 @@ public class Database {
 		return result; 
 	}
 	private MajorGroups transMGData(String data) {
+		if (data.length() == 0) return new MajorGroups();
 		MajorGroups result = new MajorGroups();
 		String[] tmp = data.split(",");
 		for(String s : tmp) {

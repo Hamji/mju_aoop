@@ -105,7 +105,7 @@ public class CountryInfoPanel extends BasicPanel {
 
    public void drawInfo(String country) {
       //System.out.println(country);
-	  Data d = new Data();
+	  Data d = Data.getInstance();
 	  CGIDTO temp;
 	  this.name.setText(country);
 	  this.remove(urlButton);

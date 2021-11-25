@@ -13,16 +13,23 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CSV {
-	private String dir;
+	private static CSV csv;
+	private String dir = null;
 
-	public CSV() {
+	private CSV() {
 		dir = null;
+	}
+	public static CSV getInstance() {
+		if(csv == null) {
+			csv = new CSV();
+		}
+
+		return csv;
 	}
 
 
 	public void CGIDataToCSV(ArrayList<CGIDTO> list) throws IOException {
-		FileWriter writer = new FileWriter("./out/file.csv");
-
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./out/result.csv"), "MS949"));
 		int i = 0;
 		while(i < list.size()) {
 			List<String> joinList = new ArrayList<String>();
@@ -59,7 +66,7 @@ public class CSV {
 
 		try {
 
-			System.out.println(csvFilePath);
+//			System.out.println(csvFilePath);
 			lineReader = new BufferedReader(new FileReader(csv));
 
 
@@ -140,7 +147,7 @@ public class CSV {
 					}
 				}
 
-				System.out.println(rgData);
+//				System.out.println(rgData);
 				String rg_name;
 				String rg_number = "";
 				Double rg_rate;
@@ -148,7 +155,7 @@ public class CSV {
 				String[] rgArray = (String[]) rgData.toArray(new String[rgData.size()]);
 
 				for(int i = 0; i< rgArray.length; i++) {
-					System.out.println(rgArray[i]);
+//					System.out.println(rgArray[i]);
 					rg_name = rgArray[i].replaceAll("([0-9.]+[%]?)", "");
 					if(rg_name.contains("기타")) {
 						rg_name = "기타";
@@ -241,7 +248,7 @@ public class CSV {
 				}
 
 
-				System.out.println(mgData);
+//				System.out.println(mgData);
 				String mg_name;
 				String mg_number = "";
 				Double mg_rate;
