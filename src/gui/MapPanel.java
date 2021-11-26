@@ -63,6 +63,7 @@ public class MapPanel extends BasicPanel {
 		boolean isFirst = true;
 		Set<String> filtered_country = new HashSet<>();
 		for(String filter: filters) {
+			boolean isContinent = false;
 			for(Continent continent: continents) if(continent.hasName(filter)) continent.clicked();
 			Set<String> current_filter = new HashSet<>();
 
@@ -72,6 +73,7 @@ public class MapPanel extends BasicPanel {
 				ArrayList<CGIDTO> dtos;
 				for(Continent continent: continents) {
 					if(continent.hasName(filter)) {
+						isContinent = true;
 						dtos = Data.getInstance().getDataLocation(filter);
 						for(CGIDTO cgidto: dtos) current_filter.add(cgidto.getCountry());
 					}
@@ -93,12 +95,13 @@ public class MapPanel extends BasicPanel {
 				filterInfo.put(filter, current_filter);
 			}
 
-			if(isFirst) {
+			if(isFirst || isContinent) {
 				isFirst = false;
 				filtered_country.addAll(current_filter);
 			} else {
 				filtered_country.retainAll(current_filter);
 			}
+			filtered_country.addAll(current_filter);
 		}
 		// 필터에 해당되는 나라 이름들
 		for(Continent continent: continents) {

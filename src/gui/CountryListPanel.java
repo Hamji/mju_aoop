@@ -28,7 +28,7 @@ public class CountryListPanel extends BasicPanel {
       temp.addMouseListener(new MouseAdapter() {
          @Override
          public void mouseClicked(MouseEvent e) {
-            ((CountryInfoPanel) PanelManager.getInstance().getPanel("CountryInfoPanel")).drawInfo(data[e.getClickCount() - 1]);
+            ((CountryInfoPanel) PanelManager.getInstance().getPanel("CountryInfoPanel")).drawInfo(data[temp.locationToIndex(e.getPoint())]);
          }
       });
       this.add(new JScrollPane(temp), BorderLayout.CENTER);
