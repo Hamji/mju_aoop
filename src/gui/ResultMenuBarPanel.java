@@ -20,16 +20,8 @@ public class ResultMenuBarPanel extends BasicPanel {
         JMenu jMenu = new JMenu("File");
         JMenuItem jMenuItem = new JMenuItem("Export");
         jMenuItem.addActionListener(e -> {
-            String[] countries = ((CountryListPanel) PanelManager.getInstance().getPanel("CountryListPanel")).getCountries();
-            ArrayList<CGIDTO> CGIcountries = new ArrayList<>();
-            Data data = Data.getInstance();
-            for(String country : countries) {
-                // TODO : getCountryData 확인해야함
-                CGIcountries.add(data.getCountryData(country));
-            }
             try {
-                CSV csv = CSV.getInstance();
-                csv.CGIDataToCSV(CGIcountries);
+                CSV.getInstance().CGIDataToCSV(Arrays.asList(((CountryListPanel) PanelManager.getInstance().getPanel("CountryListPanel")).getCountriesDTO()));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

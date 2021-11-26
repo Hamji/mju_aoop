@@ -1,6 +1,7 @@
 package gui;
 
 import data.CountryData;
+import data.dto.CGIDTO;
 
 import java.awt.*;
 
@@ -11,7 +12,7 @@ public class ResultFrame extends JDialog {
 	private CountryInfoPanel countryInfoPanel;
 	private ResultMenuBarPanel resultMenuBarPanel;
 	
-	public ResultFrame(String[] countries) {
+	public ResultFrame(String[] countries, CGIDTO[] dtos) {
 		this.setBounds(500, 200, 800, 500);
 		this.setSize(800, 500);
 		this.setResizable(false);
@@ -20,7 +21,7 @@ public class ResultFrame extends JDialog {
 
 		// TODO country가 실제로 있는 country인지 확인해야함
 		this.countryInfoPanel = new CountryInfoPanel();
-		this.countryListPanel = new CountryListPanel(countries);
+		this.countryListPanel = new CountryListPanel(countries, dtos);
 		this.resultMenuBarPanel = new ResultMenuBarPanel();
 
 		PanelManager.getInstance().addPanel(countryInfoPanel);

@@ -42,6 +42,8 @@ public class MainFrame extends JFrame {
 		JMenuBar jMenuBar = new MainMenuBar();
 		this.contentPane.add(jMenuBar, BorderLayout.NORTH);
 
+
 		// Data data = new Data();
+		revalidate();
 	}	
 }
