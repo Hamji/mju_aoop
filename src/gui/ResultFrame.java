@@ -19,7 +19,6 @@ public class ResultFrame extends JDialog {
 		this.setLayout(new BorderLayout(5, 5));
 		this.setVisible(true);
 
-		// TODO country가 실제로 있는 country인지 확인해야함
 		this.countryInfoPanel = new CountryInfoPanel();
 		this.countryListPanel = new CountryListPanel(countries, dtos);
 		this.resultMenuBarPanel = new ResultMenuBarPanel();

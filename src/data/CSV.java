@@ -29,7 +29,7 @@ public class CSV {
 
 
 	public void CGIDataToCSV(List<CGIDTO> list) throws IOException {
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./out/result.csv"), "MS949"));
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("result.csv"), "MS949"));
 		int i = 0;
 		while(i < list.size()) {
 			List<String> joinList = new ArrayList<String>();

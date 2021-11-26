@@ -123,4 +123,7 @@ public class MapPanel extends BasicPanel {
 		repaint();
 	}
 
+	public Continent[] getContinents() {
+		return continents;
+	}
 }

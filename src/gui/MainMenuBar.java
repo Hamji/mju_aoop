@@ -1,9 +1,14 @@
 package gui;
 
+import data.CSV;
+import data.dto.CGIDTO;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainMenuBar extends JMenuBar {
     private String filePath = null;
@@ -18,9 +23,15 @@ public class MainMenuBar extends JMenuBar {
 
         JMenuItem saveAs = new JMenuItem("Save as ...");
         saveAs.addActionListener(e -> saveAsFilter());
+
+        JMenuItem export = new JMenuItem("Export");
+        export.addActionListener(e -> export());
+
         jMenu.add(load);
         jMenu.add(save);
         jMenu.add(saveAs);
+        jMenu.add(export);
+
         add(jMenu);
     }
 
@@ -37,6 +48,17 @@ public class MainMenuBar extends JMenuBar {
         }
     }
 
+    private void export() {
+        Continent[] continents = ((MapPanel) PanelManager.getInstance().getPanel("MapPanel")).getContinents();
+        ArrayList<CGIDTO> cgidtoArrayList = new ArrayList<>();
+        for(Continent continent: continents) Collections.addAll(cgidtoArrayList, continent.getCountriesDTO());
+
+        try {
+            CSV.getInstance().CGIDataToCSV(cgidtoArrayList);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
     private void loadFilter() {
         JFileChooser fc = new JFileChooser();
         // 바탕화면
