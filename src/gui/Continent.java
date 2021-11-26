@@ -50,6 +50,7 @@ public class Continent extends JButton {
 
     public void clicked() {
         isClicked = true;
+        super.setText(String.valueOf(countries.size()));
     }
 
     public Boolean hasName(String filter) {
@@ -60,12 +61,8 @@ public class Continent extends JButton {
     }
 
     public void update(Set<String> filter_countries) {
-        if(!isClicked) return;
-        System.out.println("변경 전: " + countries);
-        System.out.println("필터 : " + filter_countries);
-
+        if(!isClicked || filter_countries.size() == 0) return;
         countries.retainAll(filter_countries);
-        System.out.println("변경 후 : " + countries);
         super.setText(String.valueOf(countries.size()));
     }
 

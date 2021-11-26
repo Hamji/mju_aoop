@@ -55,29 +55,41 @@ public class MapPanel extends BasicPanel {
 
 	public void updateButtons(String[] filters) {
 		// 초기화
-		System.out.println(Arrays.toString(filters));
 		for(Continent continent: continents) continent.reset();
 		String[] weathers = ((DetailFilterPanel) PanelManager.getInstance().getPanel("DetailFilterPanel")).getWeather();
 		String[] faithes = ((DetailFilterPanel) PanelManager.getInstance().getPanel("DetailFilterPanel")).getFaith();
+
+
+		// 국가 먼저 처리
+		Set<String> country = new HashSet<>();
+		for(String filter: filters) {
+			for(Continent continent: continents) {
+				if(continent.hasName(filter)) {
+					continent.clicked();
+					if(filterInfo.containsKey(filter)) country.addAll(filterInfo.get(filter));
+					else {
+						Set<String> cgidtoSet = new HashSet<>();
+						for(CGIDTO dto: Data.getInstance().getDataLocation(filter)) cgidtoSet.add(dto.getCountry());
+						country.addAll(cgidtoSet);
+						filterInfo.put(filter, country);
+					}
+				}
+			}
+		}
 
 		boolean isFirst = true;
 		Set<String> filtered_country = new HashSet<>();
 		for(String filter: filters) {
 			boolean isContinent = false;
-			for(Continent continent: continents) if(continent.hasName(filter)) continent.clicked();
 			Set<String> current_filter = new HashSet<>();
 
+			for(Continent continent: continents) if(continent.hasName(filter)) isContinent = true;
+
+			if(isContinent) continue;
 			if (filterInfo.containsKey(filter)) { // 필터 값을 가지고 있다면
 				current_filter.addAll(filterInfo.get(filter));
 			} else {
 				ArrayList<CGIDTO> dtos;
-				for(Continent continent: continents) {
-					if(continent.hasName(filter)) {
-						isContinent = true;
-						dtos = Data.getInstance().getDataLocation(filter);
-						for(CGIDTO cgidto: dtos) current_filter.add(cgidto.getCountry());
-					}
-				}
 
 				for(String weather: weathers) {
 					if (weather.equals(filter)) {
@@ -95,15 +107,14 @@ public class MapPanel extends BasicPanel {
 				filterInfo.put(filter, current_filter);
 			}
 
-			if(isFirst || isContinent) {
+			if(isFirst || current_filter.size() == 0) {
 				isFirst = false;
 				filtered_country.addAll(current_filter);
 			} else {
 				filtered_country.retainAll(current_filter);
 			}
-			filtered_country.addAll(current_filter);
 		}
-		// 필터에 해당되는 나라 이름들
+
 		for(Continent continent: continents) {
 			continent.update(filtered_country);
 		}
