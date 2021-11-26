@@ -19,7 +19,7 @@ public class Database {
 	//데이터베이스 Connection
 	private Connection con;
 	//DB설정파일
-	private static final String RESOURCE = "src/resource/db.properties";
+	private static final String RESOURCE = "src/resource/db-real.properties";
 	//DB설정값
 	private String DB_DRIVER_CLASS = null;
 	private String DB_URL = null;
