@@ -1,7 +1,5 @@
 package gui;
 
-import data.CountryData;
-
 import java.awt.*;
 
 import javax.swing.*;
