@@ -43,6 +43,7 @@ public class ApplyedListPanel extends BasicPanel {
 		for(int i = selectedIndices.length - 1; i >= 0; i--) {
 			items.remove(selectedIndices[i]);
 		}
+		((MapPanel) PanelManager.getInstance().getPanel("MapPanel")).updateButtons(Arrays.copyOf(items.toArray(), items.size(), String[].class));
 	}
 
 	public String[] getFilterList() {

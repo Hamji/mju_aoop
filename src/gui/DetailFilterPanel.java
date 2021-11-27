@@ -37,7 +37,7 @@ public class DetailFilterPanel extends BasicPanel {
             jButtons.add(btn);
 
         }
-        //revalidate();
+        revalidate();
         repaint();
     }
 

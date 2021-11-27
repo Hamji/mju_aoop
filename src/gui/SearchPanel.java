@@ -17,7 +17,7 @@ public class SearchPanel extends BasicPanel {
 		this.add(searchBtn, BorderLayout.EAST);
 		this.add(searchTxt, BorderLayout.CENTER);
 		
-		this.searchBtn.addActionListener(e -> new ResultFrame(new String[]{(String)searchTxt.getSelectedItem()}));
+		this.searchBtn.addActionListener(e -> new ResultFrame(new String[]{(String)searchTxt.getSelectedItem()}, null));
 	}
 
 }
