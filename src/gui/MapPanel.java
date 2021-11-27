@@ -9,9 +9,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.*;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-
 public class MapPanel extends BasicPanel {
 	private Image img;
 	private enum COUNTRY{AFRICA, ASIA, AMERICA, EUROPE, SOUTH};

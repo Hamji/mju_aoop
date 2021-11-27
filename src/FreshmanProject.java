@@ -1,7 +1,5 @@
 import java.awt.EventQueue;
 
-import data.Data;
-import data.Database;
 import gui.MainFrame;
 
 public class FreshmanProject {

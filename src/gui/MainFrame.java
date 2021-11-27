@@ -1,13 +1,10 @@
 package gui;
 
 import data.Data;
-import data.Database;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 
 public class MainFrame extends JFrame {

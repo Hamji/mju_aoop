@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 
 import javax.swing.ImageIcon;
 
-import gui.MainFrame;
-
 public class OverviewPanel extends BasicPanel{
 	private SearchPanel searchPanel;
 	private MapPanel mapPanel;
