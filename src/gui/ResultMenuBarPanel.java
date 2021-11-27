@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ResultMenuBarPanel extends BasicPanel {
     public ResultMenuBarPanel() {

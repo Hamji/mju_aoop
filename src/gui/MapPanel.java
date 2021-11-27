@@ -25,9 +25,9 @@ public class MapPanel extends BasicPanel {
 		  filterInfo = new HashMap<>();
 		  continents[COUNTRY.AFRICA.ordinal()] = new Continent(); continents[COUNTRY.AFRICA.ordinal()].setCountry(new String[] {"아프리카"});
 		  continents[COUNTRY.ASIA.ordinal()] = new Continent(); continents[COUNTRY.ASIA.ordinal()].setCountry(new String[] {"아시아"});
-		  continents[COUNTRY.AMERICA.ordinal()] = new Continent(); continents[COUNTRY.AMERICA.ordinal()].setCountry(new String[] {"아메리카"});
+		  continents[COUNTRY.AMERICA.ordinal()] = new Continent(); continents[COUNTRY.AMERICA.ordinal()].setCountry(new String[] {"아메리카", "미국", "중미", "북미"});
 		  continents[COUNTRY.EUROPE.ordinal()] = new Continent(); continents[COUNTRY.EUROPE.ordinal()].setCountry(new String[] {"유럽"});
-		  continents[COUNTRY.SOUTH.ordinal()] = new Continent(); continents[COUNTRY.SOUTH.ordinal()].setCountry(new String[] {"남아메리카"});
+		  continents[COUNTRY.SOUTH.ordinal()] = new Continent(); continents[COUNTRY.SOUTH.ordinal()].setCountry(new String[] {"남아메리카", "남미"});
 
 		  continents[COUNTRY.AFRICA.ordinal()].setBounds(550, 350, 100, 100);
 		  continents[COUNTRY.ASIA.ordinal()].setBounds(800, 200, 100, 100);
@@ -86,11 +86,24 @@ public class MapPanel extends BasicPanel {
 			if (filterInfo.containsKey(filter)) { // 필터 값을 가지고 있다면
 				current_filter.addAll(filterInfo.get(filter));
 			} else {
-				ArrayList<CGIDTO> dtos;
+				ArrayList<CGIDTO> dtos = null;
 
 				for(String weather: weathers) {
 					if (weather.equals(filter)) {
-						dtos = Data.getInstance().getDataWeather(filter);
+						ArrayList<String> detailFilter = new ArrayList<>();
+						if (filter.equals("추움"))  {
+							detailFilter.add("추움"); detailFilter.add("한랭"); detailFilter.add("북극"); detailFilter.add("저온"); detailFilter.add("추운");
+						} else if(filter.equals("더움")) {
+							detailFilter.add("온화"); detailFilter.add("열대"); detailFilter.add("고온");
+						} else if(filter.equals("건조")) {
+							detailFilter.add("건조");
+						} else {
+							detailFilter.add("습함"); detailFilter.add("다습"); detailFilter.add("습");
+						}
+						for(String dFilter: detailFilter) {
+							if(dtos == null) dtos = Data.getInstance().getDataWeather(dFilter);
+							else dtos.addAll(Data.getInstance().getDataWeather(dFilter));
+						}
 						for(CGIDTO dto: dtos) current_filter.add(dto.getCountry());
 					}
 				}

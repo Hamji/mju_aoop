@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class DetailFilterPanel extends BasicPanel {
-    final private String[] region = {"아시아", "아프리카", "아메리카", "유럽"};
+    final private String[] region = {"아시아", "아프리카", "아메리카", "유럽", "남아메리카"};
     final private String[] weather = {"건조", "습함", "더움", "추움"};
     final private String[] faith = {"이슬람", "가톨릭", "개신교", "힌두교", "무교"};
     private ArrayList<JButton> jButtons = new ArrayList<>();
